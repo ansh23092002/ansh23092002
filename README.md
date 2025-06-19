@@ -1,7 +1,7 @@
 
 # 👋 Hi, I'm Ansh sharma - Full Stack Developer
 
-![Developer Banner](https://cdn.vectorstock.com/i/1000v/22/37/big-data-developer-header-banner-vector-23242237.avif)
+![Developer Banner](https://t3.ftcdn.net/jpg/08/86/49/54/360_F_886495498_14NHE9pzw6B7SGoU5Sxb4leA8gpXYDpz.jpg)
 
 ## 🛠️ My Tech Stack
 
