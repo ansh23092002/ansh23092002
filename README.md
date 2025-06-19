@@ -1,5 +1,5 @@
 
-# 👋 Hi, I'm [Your Name] - Full Stack Developer
+# 👋 Hi, I'm Ansh sharma - Full Stack Developer
 
 ![Developer Banner](https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80)
 
@@ -23,7 +23,7 @@
 - [Project 2](https://github.com/yourusername/project2) - Responsive dashboard with TailwindCSS
 
 ### Java Applications
-- [Enterprise App](https://github.com/yourusername/java-app) - Robust backend system
+- [Enterprise App](https://github.com/yourusername/java-app) - 
 
 ## 📊 GitHub Stats
 
