@@ -1,7 +1,7 @@
 
-# 👋 Hi, I'm Ansh sharma - Full Stack Developer
-
 ![Developer Banner](https://t3.ftcdn.net/jpg/08/86/49/54/360_F_886495498_14NHE9pzw6B7SGoU5Sxb4leA8gpXYDpz.jpg)
+
+# <img src="https://emojis.slackmojis.com/emojis/images/1531849430/4246/blob-sunglasses.gif?1531849430" width="30"/> Hi, I'm Ansh sharma - Full Stack Developer
 
 <!--Night Owl image-->
 <div>
