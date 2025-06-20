@@ -5,7 +5,7 @@
 
 <!--Night Owl image-->
 <div>
-  <img align="right" width="10%" src="https://owlbertsio-resized.s3.amazonaws.com/Popper.psd.full.png">
+  <img align="right" width="40%" src="https://owlbertsio-resized.s3.amazonaws.com/Popper.psd.full.png">
 </div>
 
 ## 🛠️ My Tech Stack
@@ -23,7 +23,7 @@
 
 ## 🚀 My Projects
 <div>
-  <img align="right" width="40%" src="[https://owlbertsio-resized.s3.amazonaws.com/Popper.psd.full.png](https://www.shutterstock.com/shutterstock/videos/3758341477/preview/stock-footage-coding-lessons-website-backend-frontend-development-software-developers-stand-near-page-with.webm)">
+  <img align="right" width="80%" src="https://www.shutterstock.com/shutterstock/videos/3758341477/preview/stock-footage-coding-lessons-website-backend-frontend-development-software-developers-stand-near-page-with.webm">
 </div>
 
 ### React + TypeScript Projects
