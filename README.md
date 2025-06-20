@@ -23,8 +23,6 @@
 
 ## 🚀 My Projects
 
-  <img align="right" width="80%" src="https://www.shutterstock.com/shutterstock/videos/3758341477/preview/stock-footage-coding-lessons-website-backend-frontend-development-software-developers-stand-near-page-with.webm">
-
 
 ### React + TypeScript Projects
 - [Project 1](https://github.com/yourusername/project1) - A modern web application built with React and TypeScript
