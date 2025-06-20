@@ -22,8 +22,6 @@
 - [Project 1](https://github.com/yourusername/project1) - A modern web application built with React and TypeScript
 - [Project 2](https://github.com/yourusername/project2) - Responsive dashboard with TailwindCSS
 
-### Java Applications
-- [Enterprise App](https://github.com/yourusername/java-app) - 
 
 ## 📊 GitHub Stats
 
