@@ -22,9 +22,9 @@
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 
 ## 🚀 My Projects
-<div>
+
   <img align="right" width="80%" src="https://www.shutterstock.com/shutterstock/videos/3758341477/preview/stock-footage-coding-lessons-website-backend-frontend-development-software-developers-stand-near-page-with.webm">
-</div>
+
 
 ### React + TypeScript Projects
 - [Project 1](https://github.com/yourusername/project1) - A modern web application built with React and TypeScript
