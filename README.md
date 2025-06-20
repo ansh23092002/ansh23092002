@@ -1,14 +1,14 @@
 
 ![Developer Banner](https://t3.ftcdn.net/jpg/08/86/49/54/360_F_886495498_14NHE9pzw6B7SGoU5Sxb4leA8gpXYDpz.jpg)
 
-# <img src="https://emojis.slackmojis.com/emojis/images/1531849430/4246/blob-sunglasses.gif?1531849430" width="30"/> Hi, I'm Ansh sharma - Full Stack Developer
+# <img src="https://emojis.slackmojis.com/emojis/images/1531849430/4246/blob-sunglasses.gif?1531849430" width="30"/> Hi, I'm Ansh sharma 
 
 <!--Night Owl image-->
 <div>
   <img align="right" width="40%" src="https://owlbertsio-resized.s3.amazonaws.com/Popper.psd.full.png">
 </div>
 
-## 🛠️ My Tech Stack
+### 🛠️ My Tech Stack
 
 ### Frontend Development
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
