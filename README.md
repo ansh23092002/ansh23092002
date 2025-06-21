@@ -55,3 +55,8 @@ const mySkills = {
   tools: ["Git", "Docker", "Webpack", "Vite"],
   methodologies: ["Agile", "Scrum", "TDD"]
 };
+
+```
+### Follow me
+
+ <a href="https://www.linkedin.com/in/ansh-sharma-78aa5a227/" target="_blank" rel="noreferrer"> <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExYW9jZjAxNjhkcHlnbXF3ajY0cjJtMGZpdDh0MXAwcnliYTkxaHdrbCZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/a9eTxCdJhDU98Jp79g/giphy.webp" alt="mysql" width="50" height="50"/>
