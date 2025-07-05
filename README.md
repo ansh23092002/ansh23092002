@@ -46,14 +46,14 @@ const mySkills = {
   frontend: {
     frameworks: ["React", "Next.js"],
     languages: ["JavaScript", "TypeScript"],
-    styling: ["CSS3", "TailwindCSS", "SASS"]
+    styling: ["CSS3", "TailwindCSS"]
   },
   backend: {
-    languages: ["Java", "Node.js"],
-    databases: ["MySQL", "MongoDB"]
+ 
+    databases: ["MySQL"]
   },
-  tools: ["Git", "Docker", "Webpack", "Vite"],
-  methodologies: ["Agile", "Scrum", "TDD"]
+  tools: ["Git",  "Vite"],
+
 };
 
 ```
