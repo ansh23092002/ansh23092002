@@ -1,62 +1,78 @@
-
 ![Developer Banner](https://t3.ftcdn.net/jpg/08/86/49/54/360_F_886495498_14NHE9pzw6B7SGoU5Sxb4leA8gpXYDpz.jpg)
 
-# <img src="https://emojis.slackmojis.com/emojis/images/1531849430/4246/blob-sunglasses.gif?1531849430" width="30"/> Hi, I'm Ansh sharma 
+<h1 align="center">Hi 👋, I'm Ansh Sharma</h1>
+<h3 align="center">🚀 A Passionate Frontend Developer | React & Next.js Enthusiast</h3>
 
-<!--Night Owl image-->
-<div>
-  <img align="right" width="40%" src="https://owlbertsio-resized.s3.amazonaws.com/Popper.psd.full.png">
+<!-- Owl Image Right Side -->
+<img align="right" width="250" src="https://owlbertsio-resized.s3.amazonaws.com/Popper.psd.full.png" alt="Night Owl Developer"/>
+
+---
+
+## 🧠 About Me  
+
+💡 I'm a **Frontend Developer** who loves crafting smooth, responsive, and modern UIs with React and Next.js.  
+⚙️ Currently learning advanced **Next.js App Router**, **ShadCN UI**, and **Backend integration with Node & MySQL**.  
+🎯 Goal: Build scalable full-stack projects that merge functionality with clean design.  
+🌱 Always curious — learning, building, and pushing limits daily.  
+
+---
+
+## 🛠️ Tech Stack  
+
+### 🖥️ Frontend
+<p>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" width="45"/> 
+  <img src="https://cdn.worldvectorlogo.com/logos/nextjs-2.svg" width="45"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" width="45"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" width="45"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" width="45"/>
+  <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" width="45"/>
+</p>
+
+### ⚙️ Tools & Platforms
+<p>
+  <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" width="45"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/linux/linux-original.svg" width="45"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mysql/mysql-original-wordmark.svg" width="45"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" width="45"/>
+  <img src="https://vitejs.dev/logo.svg" width="45"/>
+</p>
+
+---
+
+## 🚀 Featured Projects  
+
+| Project | Description | Tech |
+|----------|--------------|------|
+| [🎯 Movementor](https://movemetorformgym.netlify.app) | A fitness tracking web app to improve gym performance | React, TailwindCSS |
+| [🏭 Aarcee Casting](https://github.com/ansh23092002/aarcee-casting) | A professional business website for an industrial casting company | React, TailwindCSS |
+| [🚚 Lorry Website](https://github.com/ansh23092002/lorrywebside) | Logistics management website with responsive UI and modern design | React, Node.js |
+
+---
+
+## 📊 GitHub Stats  
+
+<div align="center">
+  
+![Ansh's GitHub stats](https://github-readme-stats.vercel.app/api?username=ansh23092002&show_icons=true&theme=radical&hide_border=true&include_all_commits=true)
+  
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=ansh23092002&layout=compact&theme=radical&hide_border=true)
+
 </div>
 
-### 🛠️ My Tech Stack
+---
 
-### Frontend Development
-<a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> </a>  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/> </a> <br>
-<a href="https://www.w3.org/html/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> </a> 
-<a href="https://www.w3schools.com/css/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> </a> <br>
-<br>
- <a href="https://tailwindcss.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" alt="tailwind" width="40" height="40"/> </a> </p>
-
-<h3 align="left">Languages and Tools:</h3>
-<p align="left">  <a href="https://git-scm.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/> </a>  <a href="https://www.linux.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/linux/linux-original.svg" alt="linux" width="40" height="40"/> <br>
-  <a href="https://www.mysql.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mysql/mysql-original-wordmark.svg" alt="mysql" width="40" height="40"/> </a> <a href="https://nextjs.org/" target="_blank" rel="noreferrer"> <img src="https://cdn.worldvectorlogo.com/logos/nextjs-2.svg" alt="nextjs" width="40" height="40"/> </a> <a href="https://nodejs.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/> </a>  </p>
-
-
-
-
-
-## 🚀 My Projects
-
-
-### React + TypeScript Projects
-- [Project 1](https://github.com/yourusername/project1) - A modern web application built with React and TypeScript
-- [Project 2](https://github.com/yourusername/project2) - Responsive dashboard with TailwindCSS
-
-
-## 📊 GitHub Stats
-
-
-
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=ansh23092002&layout=compact&theme=radical)
-
-## 🌟 Skills Overview
+## 🌟 Skills Overview  
 
 ```javascript
 const mySkills = {
   frontend: {
     frameworks: ["React", "Next.js"],
     languages: ["JavaScript", "TypeScript"],
-    styling: ["CSS3", "TailwindCSS"]
+    styling: ["CSS3", "TailwindCSS"],
   },
   backend: {
- 
-    databases: ["MySQL"]
+    databases: ["MySQL"],
   },
-  tools: ["Git",  "Vite"],
-
+  tools: ["Git", "Vite"],
 };
-
-```
-### Follow me
-
- <a href="https://www.linkedin.com/in/ansh-sharma-78aa5a227/" target="_blank" rel="noreferrer"> <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExYW9jZjAxNjhkcHlnbXF3ajY0cjJtMGZpdDh0MXAwcnliYTkxaHdrbCZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/a9eTxCdJhDU98Jp79g/giphy.webp" alt="mysql" width="50" height="50"/>
