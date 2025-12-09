@@ -88,17 +88,6 @@ A professional industrial website developed for a casting manufacturing company.
 - Responsive design  
 - Production-ready layout  
 
----
-
-## 📊 GitHub Stats  
-
-<div align="center">
-
-![Ansh's GitHub Stats](https://github-readme-stats.vercel.app/api?username=ansh23092002&show_icons=true&theme=radical&hide_border=true&include_all_commits=true)
-
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=ansh23092002&layout=compact&theme=radical&hide_border=true)
-
-</div>
 
 ---
 
@@ -107,7 +96,7 @@ A professional industrial website developed for a casting manufacturing company.
 ```js
 const skills = {
   frontend: ["React", "Next.js", "Tailwind CSS"],
-  basics: ["JavaScript", "HTML", "CSS"],
-  learning: ["TypeScript", "Node.js", "MySQL"],
+     ["JavaScript", "HTML", "CSS"],
+  learning: ["TypeScript", "Node.js", "MySQL","AWS","CI CD"],
   tools: ["Git", "Vite", "Linux"],
 };
