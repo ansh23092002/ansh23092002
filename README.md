@@ -1,25 +1,29 @@
 ![Developer Banner](https://t3.ftcdn.net/jpg/08/86/49/54/360_F_886495498_14NHE9pzw6B7SGoU5Sxb4leA8gpXYDpz.jpg)
 
 <h1 align="center">Hi 👋, I'm Ansh Sharma</h1>
-<h3 align="center">🚀 A Passionate Frontend Developer | React & Next.js Enthusiast</h3>
+<h3 align="center">🚀 Frontend Developer | React & Next.js</h3>
 
-<!-- Owl Image Right Side -->
-<img align="right" width="250" src="https://owlbertsio-resized.s3.amazonaws.com/Popper.psd.full.png" alt="Night Owl Developer"/>
-
----
-
-## 🧠 About Me  
-
-💡 I'm a **Frontend Developer** who loves crafting smooth, responsive, and modern UIs with React and Next.js.  
-⚙️ Currently learning advanced **Next.js App Router**, **ShadCN UI**, and **Backend integration with Node & MySQL**.  
-🎯 Goal: Build scalable full-stack projects that merge functionality with clean design.  
-🌱 Always curious — learning, building, and pushing limits daily.  
+<img align="right" width="250" src="https://owlbertsio-resized.s3.amazonaws.com/Popper.psd.full.png" alt="Developer Illustration"/>
 
 ---
 
-## 🛠️ Tech Stack  
+## 👨‍💻 About Me  
 
-### 🖥️ Frontend
+I'm a **Frontend Developer** focused on building modern, responsive, and scalable web applications using **React** and **Next.js**.  
+I enjoy turning complex requirements into clean, user-friendly interfaces.
+
+- 💻 Strong in React, Next.js & Tailwind CSS  
+- ⚡ Learning advanced Next.js (App Router), backend integration & databases  
+- 🎯 Goal: Work on real-world products that solve meaningful problems  
+- 📈 Always improving code quality, performance & UI/UX  
+
+📌 **Open for Frontend Developer roles & Freelance projects**
+
+---
+
+## 🛠 Tech Stack  
+
+### Frontend
 <p>
   <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" width="45"/> 
   <img src="https://cdn.worldvectorlogo.com/logos/nextjs-2.svg" width="45"/>
@@ -29,12 +33,16 @@
   <img src="https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg" width="45"/>
 </p>
 
-### ⚙️ Tools & Platforms
+### Backend & Database (Learning)
+<p>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" width="45"/>
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mysql/mysql-original-wordmark.svg" width="45"/>
+</p>
+
+### Tools & Platforms
 <p>
   <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" width="45"/>
   <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/linux/linux-original.svg" width="45"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mysql/mysql-original-wordmark.svg" width="45"/>
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" width="45"/>
   <img src="https://vitejs.dev/logo.svg" width="45"/>
 </p>
 
@@ -42,37 +50,64 @@
 
 ## 🚀 Featured Projects  
 
-| Project | Description | Tech |
-|----------|--------------|------|
-| [🎯 Movementor](https://movemetorformgym.netlify.app) | A fitness tracking web app to improve gym performance | React, TailwindCSS |
-| [🏭 Aarcee Casting](https://github.com/ansh23092002/aarcee-casting) | A professional business website for an industrial casting company | React, TailwindCSS |
-| [🚚 Lorry Website](https://github.com/ansh23092002/lorrywebside) | Logistics management website with responsive UI and modern design | React, Node.js |
+### 🔥 Zenzy Web — Next.js Application  
+🌐 Live Demo: https://zenzy-web.vercel.app  
+
+A modern and responsive web application built with **Next.js**, focusing on performance, scalability, and clean UI design.
+
+**Tech Stack:** Next.js, Tailwind CSS, JavaScript  
+**Key Highlights:**
+- App Router based architecture  
+- SEO-friendly pages  
+- Fully responsive layout  
+- Clean and modular component structure  
+
+---
+
+### 🎯 Movementor — Fitness Web App  
+🌐 Live Demo: https://movemetorformgym.netlify.app  
+
+A fitness-focused web app designed to help gym users track workouts and improve performance.
+
+**Tech Stack:** React, Tailwind CSS  
+**Features:**
+- Responsive UI  
+- Performance-focused layout  
+- Clean component-based design  
+
+---
+
+### 🏭 Aarcee Casting — Business Website  
+🔗 Repository: https://github.com/ansh23092002/aarcee-casting  
+
+A professional industrial website developed for a casting manufacturing company.
+
+**Tech Stack:** React, Tailwind CSS  
+**Highlights:**
+- Business-oriented UI  
+- Responsive design  
+- Production-ready layout  
 
 ---
 
 ## 📊 GitHub Stats  
 
 <div align="center">
-  
-![Ansh's GitHub stats](https://github-readme-stats.vercel.app/api?username=ansh23092002&show_icons=true&theme=radical&hide_border=true&include_all_commits=true)
-  
+
+![Ansh's GitHub Stats](https://github-readme-stats.vercel.app/api?username=ansh23092002&show_icons=true&theme=radical&hide_border=true&include_all_commits=true)
+
 ![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=ansh23092002&layout=compact&theme=radical&hide_border=true)
 
 </div>
 
 ---
 
-## 🌟 Skills Overview  
+## 🧠 Skills Overview  
 
-```javascript
-const mySkills = {
-  frontend: {
-    frameworks: ["React", "Next.js"],
-    languages: ["JavaScript", "TypeScript"],
-    styling: ["CSS3", "TailwindCSS"],
-  },
-  backend: {
-    databases: ["MySQL"],
-  },
-  tools: ["Git", "Vite"],
+```js
+const skills = {
+  frontend: ["React", "Next.js", "Tailwind CSS"],
+  basics: ["JavaScript", "HTML", "CSS"],
+  learning: ["TypeScript", "Node.js", "MySQL"],
+  tools: ["Git", "Vite", "Linux"],
 };
