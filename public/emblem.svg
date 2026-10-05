@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <defs>
+    <linearGradient id="embBadgeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e1017"/>
+      <stop offset="100%" stop-color="#181a24"/>
+    </linearGradient>
+    <linearGradient id="embBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00dfd8"/>
+      <stop offset="50%" stop-color="#0070f3"/>
+      <stop offset="100%" stop-color="#7928ca"/>
+    </linearGradient>
+    <linearGradient id="embCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00dfd8"/>
+      <stop offset="100%" stop-color="#007cf0"/>
+    </linearGradient>
+    <linearGradient id="embViolet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7928ca"/>
+      <stop offset="100%" stop-color="#ff0080"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#embBadgeBg)" stroke="url(#embBorder)" stroke-width="2"/>
+  
+  <!-- Stylized Geometric A -->
+  <path d="M32 14L19 43H25.5L28.2 36.5H35.8L38.5 43H45L32 14Z" fill="url(#embCyan)" />
+  <polygon points="32,22 29.6,30.5 34.4,30.5" fill="#0e1017"/>
+
+  <!-- Fluid S Ribbon -->
+  <path d="M23 38C23 38 28 32 36 32C41 32 43 34.5 43 38C43 42.5 37 44.5 33 46C27 48.5 22 50 22 54.5C22 59 27 60.5 33 60.5C40 60.5 44 55.5 44 55.5" 
+        stroke="url(#embViolet)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+
+  <circle cx="48" cy="16" r="2.8" fill="#00dfd8"/>
+</svg>
