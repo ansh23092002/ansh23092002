@@ -1,7 +1,46 @@
 "use client";
 
 import React, { useState } from "react";
+import dynamic from "next/dynamic";
+import Link from "next/link";
 import Logo from "@/components/Logo";
+
+const GlobeDemo = dynamic(
+  () => import("@/components/ui/globe-demo").then((m) => m.GlobeDemo),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full min-h-[500px] rounded-3xl bg-black border border-white/10 flex items-center justify-center font-mono text-xs text-blue-400/70 animate-pulse">
+        Initializing 3D Globe Demo...
+      </div>
+    ),
+  }
+);
+
+const WebcamPixelGridDemo = dynamic(
+  () => import("@/components/ui/webcam-pixel-grid-demo").then((m) => m.WebcamPixelGridDemo),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[550px] rounded-3xl bg-black border border-white/10 flex items-center justify-center font-mono text-xs text-neutral-400 animate-pulse">
+        Initializing Webcam Pixel Grid...
+      </div>
+    ),
+  }
+);
+
+
+const Globe3DDemoThird = dynamic(
+  () => import("@/components/ui/3d-globe-demo").then((m) => m.Globe3DDemoThird),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[400px] rounded-2xl bg-neutral-950 border border-white/10 flex items-center justify-center font-mono text-xs text-blue-400 animate-pulse">
+        Initializing 3D Globe with global markers...
+      </div>
+    ),
+  }
+);
 
 export default function Home() {
   const [copied, setCopied] = useState(false);
@@ -194,54 +233,75 @@ export default function Home() {
             <Logo size="md" />
           </a>
 
-          <nav className="hidden md:flex items-center gap-6 text-xs uppercase tracking-wider text-neutral-400 font-medium">
+          <nav className="flex items-center gap-6 text-xs uppercase tracking-wider text-neutral-400 font-medium overflow-x-auto py-1">
+            <a href="#globe" className="hover:text-white transition-colors">3D Globe</a>
             <a href="#about" className="hover:text-white transition-colors">About</a>
             <a href="#experience" className="hover:text-white transition-colors">Experience</a>
             <a href="#projects" className="hover:text-white transition-colors">Projects</a>
+            <a href="#vision" className="hover:text-white transition-colors">Pixel Grid</a>
             <a href="#skills" className="hover:text-white transition-colors">Skills</a>
-            <a href="#education" className="hover:text-white transition-colors">Education</a>
             <a href="#contact" className="hover:text-white transition-colors">Contact</a>
           </nav>
-
-          <div className="flex items-center gap-2.5">
-            <a
-              href="/resume.pdf"
-              download="Ansh_Sharma_Resume.pdf"
-              className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white text-black hover:bg-neutral-200 transition-all flex items-center gap-1.5 shadow-sm"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span>Resume PDF</span>
-            </a>
-            <a
-              href="https://linkedin.com/in/ansh-sharma"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:flex px-3 py-1.5 rounded-full text-xs font-medium border border-white/[0.12] text-neutral-300 hover:text-white hover:border-white/30 bg-white/[0.02] hover:bg-white/[0.06] transition-all items-center gap-1.5"
-            >
-              LinkedIn ↗
-            </a>
-          </div>
         </div>
       </header>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-24">
-        {/* HERO SECTION */}
-        <section id="about" className="flex flex-col items-start gap-6 max-w-3xl">
-          {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-xs font-medium">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            Open for Full Stack & Frontend Roles | Remote & On-site
+      {/* FULL-PAGE HERO SECTION: 3D GLOBE (ONE SCREEN HEIGHT) */}
+      <section id="globe" className="relative w-full h-[calc(100dvh-4rem)] min-h-[580px] max-h-[960px] overflow-hidden">
+        <GlobeDemo
+          title="We deploy real-time nodes worldwide"
+          subtitle="This globe is interactive and customizable. Have fun with it, and don't forget to share it. :)"
+        >
+          {/* Quick CTA buttons under Hero Globe */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-2 px-2">
+            <a
+              href="/resume.pdf"
+              download="Ansh_Sharma_Resume.pdf"
+              className="px-5 py-2 rounded-full text-xs sm:text-sm font-semibold bg-white text-black hover:bg-neutral-200 transition-all flex items-center gap-2 shadow-lg"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Download Verified Resume
+            </a>
+            <a
+              href="#about"
+              className="px-5 py-2 rounded-full text-xs sm:text-sm font-medium border border-white/15 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/30 text-white transition-all"
+            >
+              About Ansh Sharma
+            </a>
+            <a
+              href="#experience"
+              className="px-5 py-2 rounded-full text-xs sm:text-sm font-medium border border-white/15 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/30 text-white transition-all"
+            >
+              View Work Experience
+            </a>
+            <a
+              href="https://github.com/ansh23092002"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-full text-xs sm:text-sm font-medium border border-white/10 hover:border-white/30 text-neutral-300 hover:text-white transition-all flex items-center gap-1.5"
+            >
+              GitHub ↗
+            </a>
+          </div>
+        </GlobeDemo>
+      </section>
+
+      {/* MAIN CONTENT CONTAINER */}
+      <main className="relative z-10 max-w-6xl mx-auto px-6 py-16 flex flex-col gap-28">
+
+        {/* ABOUT & ENGINEERING PROFILE */}
+        <section id="about" className="flex flex-col items-start gap-8 w-full">
+          {/* Globe3DDemoThird as requested */}
+          <div className="w-full">
+            <Globe3DDemoThird />
           </div>
 
-          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.08] text-white">
-            Architecting <span className="gradient-text-blue-cyan">real-time systems</span>, WebRTC platforms &{" "}
-            <span className="gradient-text-purple-pink">scalable web apps</span>.
-          </h1>
+          <div className="flex flex-col items-start gap-6 max-w-3xl">
+            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.08] text-white">
+              Architecting <span className="gradient-text-blue-cyan">real-time systems</span>, WebRTC platforms &{" "}
+              <span className="gradient-text-purple-pink">scalable web apps</span>.
+            </h1>
 
           <p className="text-base sm:text-lg text-neutral-300 font-normal leading-relaxed">
             I am <strong className="text-white">Ansh Sharma</strong> — a Full Stack Developer with proven expertise in engineering production-grade real-time systems and government web platforms. Experienced in architecting WebRTC video conferencing platforms, leading state-level digitization end-to-end, and crafting performant Next.js & Node.js architectures.
@@ -262,28 +322,16 @@ export default function Home() {
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
             <a
-              href="/resume.pdf"
-              download="Ansh_Sharma_Resume.pdf"
+              href="#contact"
               className="px-6 py-3 rounded-full text-sm font-semibold bg-white text-black hover:bg-neutral-200 transition-all flex items-center gap-2 shadow-lg"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-              Download Verified Resume
+              Get In Touch
             </a>
             <a
-              href="#experience"
+              href="#projects"
               className="px-6 py-3 rounded-full text-sm font-medium border border-white/15 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/30 text-white transition-all"
             >
-              View Work Experience
-            </a>
-            <a
-              href="https://github.com/ansh23092002"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-3 rounded-full text-sm font-medium border border-white/10 hover:border-white/30 text-neutral-300 hover:text-white transition-all flex items-center gap-1.5"
-            >
-              GitHub ↗
+              Explore Key Projects
             </a>
           </div>
 
@@ -313,7 +361,9 @@ export default function Home() {
               </code>
             </pre>
           </div>
+          </div>
         </section>
+
 
         {/* WORK EXPERIENCE */}
         <section id="experience" className="flex flex-col gap-8">
@@ -452,6 +502,20 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* WEBCAM PIXEL GRID INTERACTIVE LAB */}
+        <section id="vision" className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <div className="text-xs uppercase tracking-widest text-neutral-400 font-mono">Interactive Vision Matrix</div>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">Webcam Pixel Grid</h2>
+            <p className="text-neutral-400 text-sm sm:text-base max-w-2xl">
+              Monochrome real-time video downsampling matrix with 60×40 elevation grid, motion smoothing, and zero artificial color tint.
+            </p>
+          </div>
+          <div className="w-full">
+            <WebcamPixelGridDemo />
           </div>
         </section>
 
