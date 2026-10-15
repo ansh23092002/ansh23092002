@@ -185,25 +185,7 @@ export const projects = [
     ],
     tech: ["React.js", "Tailwind CSS", "SEO"],
   },
-  {
-    title: "Movementor",
-    category: "Health & fitness",
-    image: "/projects/movementor.webp",
-    featured: false,
-    subtitle: "Fitness web app",
-    role: "Creator",
-    year: "2024",
-    link: "https://movemetorformgym.netlify.app",
-    domain: "movemetorformgym.netlify.app",
-    description:
-      "Helps gym-goers track workouts, plan routines and stay consistent with clear progress visualisation.",
-    metrics: [
-      "Routine tracker with local persistence",
-      "High-contrast mobile UI designed for the gym floor",
-      "Instant interaction feedback",
-    ],
-    tech: ["React.js", "Tailwind CSS", "Netlify"],
-  },
+
 ];
 
 export const skillCategories = ["Languages", "Frontend", "Backend", "Database", "Security", "DevOps"] as const;

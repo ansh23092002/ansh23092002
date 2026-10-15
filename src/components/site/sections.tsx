@@ -2,17 +2,17 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "motion/react";
+import { AnimatePresence, motion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
 import { education, experiences, marqueeSkills, profile, projects, stats } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
-import { AnimatedTitle, CountUp, EASE, Eyebrow, Magnetic, Reveal, ScrollText, SectionHeading, SplitWords, Tilt } from "./motion";
+import { AnimatedTitle, CountUp, EASE, Eyebrow, Magnetic, Reveal, ScrollText, SectionHeading, Tilt } from "./motion";
 import { scrollToId, useLenis } from "./providers";
 import { PeriodicSkills } from "./skills-lab";
 
 const toneClasses = {
   accent: "bg-accent text-ink",
   ink: "bg-ink text-white",
-  soft: "bg-white text-fg border border-line",
+  soft: "bg-surface text-fg border border-line",
   plain: "bg-surface-2 text-fg",
 } as const;
 
@@ -52,7 +52,7 @@ function ExpandingMosaic() {
             <p className="font-display text-[clamp(2.75rem,8vw,7rem)] uppercase leading-[0.9]">
               Projects I&apos;ve <span className="text-accent">built</span>
             </p>
-            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-surface-2/85 sm:text-base">
+            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
               {projects.map((p) => p.title).join("  ·  ")}
             </p>
           </motion.div>
@@ -111,7 +111,7 @@ export function About() {
           </Reveal>
         </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-3 md:mt-20 md:grid-cols-4 md:gap-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 md:mt-10 md:grid-cols-4 md:gap-4">
           {stats.map((s, i) => (
             <Reveal key={s.label} delay={i * 0.08} className="h-full">
               <Tilt className={cn("flex h-full flex-col justify-between gap-8 rounded-3xl p-5 sm:p-7", toneClasses[s.tone])}>
@@ -243,7 +243,32 @@ export function Skills() {
 /* Contact                                                              */
 /* ------------------------------------------------------------------ */
 
+function ContactWord({
+  children,
+  progress,
+  start,
+  end,
+}: {
+  children: React.ReactNode;
+  progress: MotionValue<number>;
+  start: number;
+  end: number;
+}) {
+  const opacity = useTransform(progress, [start, end], [0, 1]);
+  const y = useTransform(progress, [start, end], [16, 0]);
+
+  return (
+    <motion.span aria-hidden style={{ opacity, y }} className="contact-word inline-block">
+      {children}
+    </motion.span>
+  );
+}
+
+const contactMessage = "Open to full-time full stack and frontend roles, government and enterprise projects, and high-impact freelance work. The fastest way to reach me is email.";
+
 export function Contact() {
+  const contactRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: contactRef, offset: ["start start", "end end"] });
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -257,9 +282,9 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="px-2 pb-2 sm:px-4 sm:pb-4">
-      <div className="rounded-[32px] bg-ink text-white sm:rounded-[40px]">
-        <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8 md:py-32">
+    <section ref={contactRef} id="contact" className="contact-scroll text-white" aria-labelledby="contact-heading">
+      <div className="contact-stage">
+        <div className="mx-auto w-full max-w-6xl px-5 py-12 sm:px-8 md:py-16">
           <Reveal>
             <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-white/60">
               <span className="text-accent">05</span>
@@ -268,20 +293,24 @@ export function Contact() {
             </div>
           </Reveal>
 
-          <h2 className="mt-6 text-[clamp(2.75rem,9vw,7.5rem)] font-semibold leading-[1] tracking-[-0.045em] md:mt-8">
-            <SplitWords text="Let's build" />
-            <br />
-            <span className="text-accent">
-              <SplitWords text="something great." delay={0.15} />
+          <h2 id="contact-heading" aria-label="Let's build something great." className="mt-6 text-[clamp(2.75rem,8vw,7rem)] font-semibold leading-[1] tracking-[-0.045em] md:mt-8">
+            <span className="flex flex-wrap gap-x-[0.25em]">
+              {["Let's", "build"].map((word, i) => (
+                <ContactWord key={word} progress={scrollYProgress} start={i * 0.06} end={i * 0.06 + 0.06}>{word}</ContactWord>
+              ))}
+            </span>
+            <span className="mt-1 flex flex-wrap gap-x-[0.25em] text-accent">
+              {["something", "great."].map((word, i) => (
+                <ContactWord key={word} progress={scrollYProgress} start={0.12 + i * 0.06} end={0.18 + i * 0.06}>{word}</ContactWord>
+              ))}
             </span>
           </h2>
 
-          <Reveal delay={0.2} className="mt-8 max-w-xl md:mt-12">
-            <p className="text-base leading-relaxed text-surface-2/75 sm:text-lg">
-              Open to full-time full stack and frontend roles, government and enterprise projects, and
-              high-impact freelance work. The fastest way to reach me is email.
-            </p>
-          </Reveal>
+          <p aria-label={contactMessage} className="mt-6 flex max-w-xl flex-wrap gap-x-[0.28em] text-base leading-relaxed text-white/75 sm:text-lg md:mt-8">
+            {contactMessage.split(" ").map((word, i, words) => (
+              <ContactWord key={i} progress={scrollYProgress} start={0.24 + i / words.length * 0.5} end={0.24 + (i + 1) / words.length * 0.5}>{word}</ContactWord>
+            ))}
+          </p>
 
           <Reveal delay={0.3} className="mt-8 flex flex-wrap items-center gap-3 md:mt-12">
             <Magnetic>
@@ -315,7 +344,7 @@ export function Contact() {
 
           <Reveal
             delay={0.4}
-            className="mt-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:mt-20 md:grid-cols-4"
+            className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:mt-10 md:grid-cols-4"
           >
             {[
               { label: "LinkedIn", value: "in/ansh-sharma", href: profile.linkedin, external: true },

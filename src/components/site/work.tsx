@@ -27,10 +27,10 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             fill
             sizes="(min-width: 1280px) 1280px, 100vw"
             style={"imageFocus" in project ? { objectPosition: project.imageFocus } : undefined}
-            className="-z-20 object-cover object-top transition-transform duration-[1.4s] ease-out-expo group-hover:scale-105"
+            className="-z-20 scale-105 object-cover object-top blur-[5px] transition-transform duration-[1.4s] ease-out-expo group-hover:scale-110"
           />
         )}
-        <div className="absolute inset-0 -z-10 bg-ink/80 transition-colors duration-700 group-hover:bg-ink/65" />
+        <div className="absolute inset-0 -z-10 bg-ink/75 transition-colors duration-700 group-hover:bg-ink/70" />
 
         <div className="p-6 sm:p-8">
           <div className="flex flex-wrap items-center gap-2">
@@ -48,8 +48,8 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             </span>
           </div>
           <h3 className="mt-5 font-display text-[clamp(2.75rem,7vw,6.5rem)] uppercase leading-[0.88]">{project.title}</h3>
-          <p className="mt-3 max-w-xl text-sm text-surface-2/80 sm:text-lg">{project.description}</p>
-          <ul className="mt-5 hidden max-w-xl flex-col gap-1.5 text-sm text-surface-2/80 sm:flex">
+          <p className="mt-3 max-w-xl text-sm text-white/80 sm:text-lg">{project.description}</p>
+          <ul className="mt-5 hidden max-w-xl flex-col gap-1.5 text-sm text-white/80 sm:flex">
             {project.metrics.map((m) => (
               <li key={m} className="flex gap-2.5">
                 <span className="text-accent">●</span>
@@ -176,7 +176,7 @@ export function Work() {
       </div>
 
       {/* Each project gets one viewport of scroll to zoom through. */}
-      <div ref={stageRef} className="relative" style={{ height: `${count * 100}vh` }}>
+      <div ref={stageRef} className="relative" style={{ height: `${count * 100}svh` }}>
         <div className="sticky top-0 h-dvh overflow-hidden">
           {ordered.map((p, i) => (
             <ZoomLayer key={p.title} progress={scrollYProgress} index={i} count={count} active={i === active}>

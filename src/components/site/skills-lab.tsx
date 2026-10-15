@@ -144,8 +144,8 @@ export function ElementTile({
         "group relative flex aspect-square w-full flex-col items-center justify-center gap-1.5 rounded-xl border p-1.5 text-center transition-[background-color,border-color,color,opacity,box-shadow] duration-300",
         dark && "border-ink bg-ink text-white",
         state === "selected" && "ring-2 ring-accent ring-offset-2 ring-offset-bg",
-        state === "default" && "border-line bg-white text-fg hover:border-ink hover:bg-ink hover:text-white",
-        state === "dim" && "border-line bg-white text-fg opacity-25 hover:opacity-100",
+        state === "default" && "border-line bg-surface text-fg hover:border-ink hover:bg-ink hover:text-white",
+        state === "dim" && "border-line bg-surface text-fg opacity-25 hover:opacity-100",
       )}
     >
       <span className="absolute top-1.5 left-2 font-mono text-[9px] opacity-50">{el.n}</span>
@@ -178,7 +178,7 @@ function SkillIcon({ el }: { el: SkillElement }) {
         transition={{ type: "spring", stiffness: 260, damping: 16 }}
         className="flex items-center justify-center"
       >
-        {Icon && <Icon className="h-20 w-20 sm:h-32 sm:w-32 xl:h-56 xl:w-56" style={{ color: brandColors[el.name] }} aria-hidden />}
+        {Icon && <Icon className="h-20 w-20 sm:h-32 sm:w-32 xl:h-56 xl:w-56" style={{ color: ["#000000", "#333333", "#2B037A"].includes(brandColors[el.name]) ? "var(--fg)" : brandColors[el.name] }} aria-hidden />}
         <span className="sr-only">{el.name}</span>
       </motion.span>
     </div>
