@@ -49,7 +49,7 @@ function ExpandingMosaic() {
             style={{ opacity: captionOpacity }}
             className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.75)]"
           >
-            <p className="font-display text-[clamp(2.75rem,8vw,7rem)] uppercase leading-[0.9]">
+            <p className="font-display text-[clamp(2.75rem,8vw,6rem)] uppercase leading-[0.9]">
               Projects I&apos;ve <span className="text-accent">built</span>
             </p>
             <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
@@ -284,7 +284,7 @@ export function Contact() {
   return (
     <section ref={contactRef} id="contact" className="contact-scroll text-white" aria-labelledby="contact-heading">
       <div className="contact-stage">
-        <div className="mx-auto w-full max-w-6xl px-5 py-12 sm:px-8 md:py-16">
+        <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 md:py-12">
           <Reveal>
             <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-white/60">
               <span className="text-accent">05</span>
@@ -293,7 +293,7 @@ export function Contact() {
             </div>
           </Reveal>
 
-          <h2 id="contact-heading" aria-label="Let's build something great." className="mt-6 text-[clamp(2.75rem,8vw,7rem)] font-semibold leading-[1] tracking-[-0.045em] md:mt-8">
+          <h2 id="contact-heading" aria-label="Let's build something great." className="mt-6 text-[clamp(2.75rem,8vw,6rem)] font-semibold leading-[1] tracking-[-0.045em] md:mt-8">
             <span className="flex flex-wrap gap-x-[0.25em]">
               {["Let's", "build"].map((word, i) => (
                 <ContactWord key={word} progress={scrollYProgress} start={i * 0.06} end={i * 0.06 + 0.06}>{word}</ContactWord>
@@ -312,7 +312,7 @@ export function Contact() {
             ))}
           </p>
 
-          <Reveal delay={0.3} className="mt-8 flex flex-wrap items-center gap-3 md:mt-12">
+          <Reveal delay={0.3} className="mt-8 flex flex-wrap items-center gap-3">
             <Magnetic>
               <a
                 href={`mailto:${profile.email}`}
@@ -357,7 +357,7 @@ export function Contact() {
                 href={l.href}
                 {...(l.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                 {...(l.download ? { download: profile.resumeFileName } : {})}
-                className="group flex flex-col gap-6 bg-ink p-5 transition-colors duration-300 hover:bg-[#363f42] sm:p-6"
+                className="group flex flex-col gap-3 bg-ink p-4 transition-colors duration-300 hover:bg-[#363f42] sm:p-5"
               >
                 <span className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.15em] text-white/60">
                   {l.label}
