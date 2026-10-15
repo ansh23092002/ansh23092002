@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Design tokens — deep charcoal, soft grey, pure white and accent gold (plus tints). No gradients. */
+/* Design tokens — dark charcoal surfaces, soft white type and accent gold. */
 :root {
   --bg: #101213;
   --surface: #171a1c;

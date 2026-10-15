@@ -306,7 +306,8 @@ export function Contact() {
             </span>
           </h2>
 
-          <p aria-label={contactMessage} className="mt-6 flex max-w-xl flex-wrap gap-x-[0.28em] text-base leading-relaxed text-white/75 sm:text-lg md:mt-8">
+          <p className="mt-6 flex max-w-xl flex-wrap gap-x-[0.28em] text-base leading-relaxed text-white/75 sm:text-lg md:mt-8">
+            <span className="sr-only">{contactMessage}</span>
             {contactMessage.split(" ").map((word, i, words) => (
               <ContactWord key={i} progress={scrollYProgress} start={0.24 + i / words.length * 0.5} end={0.24 + (i + 1) / words.length * 0.5}>{word}</ContactWord>
             ))}
