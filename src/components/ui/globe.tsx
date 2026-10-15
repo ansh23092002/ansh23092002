@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { Color, Scene, Fog, PerspectiveCamera, Vector3 } from "three";
+import { Color, Scene, Fog, Vector3 } from "three";
 import ThreeGlobe from "three-globe";
 import { useThree, Canvas, extend } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -17,8 +17,7 @@ declare module "@react-three/fiber" {
 extend({ ThreeGlobe: ThreeGlobe });
 
 const RING_PROPAGATION_SPEED = 3;
-const aspect = 1.2;
-const cameraZ = 215;
+const cameraZ = 260;
 
 type Position = {
   order: number;
@@ -68,13 +67,13 @@ export function Globe({ globeConfig, data }: WorldProps) {
 
   const defaultProps = {
     pointSize: 1,
-    atmosphereColor: "#ffffff",
+    atmosphereColor: "#38bdf8",
     showAtmosphere: true,
-    atmosphereAltitude: 0.1,
-    polygonColor: "rgba(255,255,255,0.7)",
-    globeColor: "#1d072e",
-    emissive: "#000000",
-    emissiveIntensity: 0.1,
+    atmosphereAltitude: 0.15,
+    polygonColor: "rgba(255,255,255,0.75)",
+    globeColor: "#0b2b7a",
+    emissive: "#07205a",
+    emissiveIntensity: 0.3,
     shininess: 0.9,
     arcTime: 2000,
     arcLength: 0.9,
@@ -102,10 +101,10 @@ export function Globe({ globeConfig, data }: WorldProps) {
       emissiveIntensity: number;
       shininess: number;
     };
-    globeMaterial.color = new Color(globeConfig.globeColor);
-    globeMaterial.emissive = new Color(globeConfig.emissive);
-    globeMaterial.emissiveIntensity = globeConfig.emissiveIntensity || 0.1;
-    globeMaterial.shininess = globeConfig.shininess || 0.9;
+    globeMaterial.color = new Color(globeConfig.globeColor || defaultProps.globeColor);
+    globeMaterial.emissive = new Color(globeConfig.emissive || defaultProps.emissive);
+    globeMaterial.emissiveIntensity = globeConfig.emissiveIntensity ?? defaultProps.emissiveIntensity;
+    globeMaterial.shininess = globeConfig.shininess ?? 0.9;
   }, [
     isInitialized,
     globeConfig.globeColor,
@@ -249,7 +248,7 @@ export function World(props: WorldProps) {
   const scene = new Scene();
   scene.fog = new Fog(0xffffff, 400, 2000);
   return (
-    <Canvas scene={scene} camera={new PerspectiveCamera(50, aspect, 180, 1800)}>
+    <Canvas scene={scene} camera={{ fov: 50, near: 1, far: 1800, position: [0, 0, cameraZ] }}>
       <WebGLRendererConfig />
       <ambientLight color={globeConfig.ambientLight} intensity={0.6} />
       <directionalLight

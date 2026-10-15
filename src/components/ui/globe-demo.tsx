@@ -13,8 +13,8 @@ const World = dynamic(() => import("@/components/ui/globe").then((m) => m.World)
 });
 
 export function GlobeDemo({
-  title = "We deploy real-time nodes worldwide",
-  subtitle = "This globe is interactive and customizable. Have fun with it, and don't forget to share it. :)",
+  title = "Play all over the world with a click.",
+  subtitle = "Deploy real-time nodes and explore global connectivity with one interactive click.",
   children,
 }: {
   title?: string;
@@ -23,18 +23,18 @@ export function GlobeDemo({
 }) {
   const globeConfig = {
     pointSize: 4,
-    globeColor: "#062056",
+    globeColor: "#0b2b7a",
     showAtmosphere: true,
-    atmosphereColor: "#FFFFFF",
-    atmosphereAltitude: 0.1,
-    emissive: "#062056",
-    emissiveIntensity: 0.1,
+    atmosphereColor: "#38bdf8",
+    atmosphereAltitude: 0.15,
+    emissive: "#07205a",
+    emissiveIntensity: 0.3,
     shininess: 0.9,
-    polygonColor: "rgba(255,255,255,0.7)",
+    polygonColor: "rgba(255,255,255,0.75)",
     ambientLight: "#38bdf8",
     directionalLeftLight: "#ffffff",
     directionalTopLight: "#ffffff",
-    pointLight: "#ffffff",
+    pointLight: "#60a5fa",
     arcTime: 1000,
     arcLength: 0.9,
     rings: 1,
@@ -409,9 +409,9 @@ export function GlobeDemo({
 
   return (
     <div className="relative w-full h-[calc(100dvh-4rem)] min-h-[580px] max-h-[960px] flex flex-col items-center justify-between overflow-hidden pt-4 sm:pt-6 px-4">
-      {/* Intense Glowing Aura behind globe (zoomed and vibrant) */}
-      <div className="absolute bottom-[-10%] left-1/2 -translate-x-1/2 w-[600px] sm:w-[850px] md:w-[1100px] h-[400px] sm:h-[550px] md:h-[700px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.38)_0%,rgba(6,32,86,0.6)_45%,rgba(6,32,86,0.1)_70%,transparent_100%)] blur-[80px] md:blur-[110px] pointer-events-none z-0" />
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] md:w-[950px] h-[200px] md:h-[300px] rounded-full bg-cyan-500/25 blur-[120px] pointer-events-none z-0" />
+      {/* Intense Glowing Blue Aura behind globe */}
+      <div className="absolute bottom-[-12%] left-1/2 -translate-x-1/2 w-[650px] sm:w-[900px] md:w-[1150px] h-[420px] sm:h-[580px] md:h-[720px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.45)_0%,rgba(14,50,130,0.55)_45%,rgba(6,32,86,0.15)_70%,transparent_100%)] blur-[80px] md:blur-[110px] pointer-events-none z-0" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[700px] md:w-[950px] h-[220px] md:h-[320px] rounded-full bg-cyan-500/25 blur-[120px] pointer-events-none z-0" />
 
       {/* Hero Headline & Subtitle & Actions */}
       <motion.div
@@ -438,13 +438,13 @@ export function GlobeDemo({
         {children}
       </motion.div>
 
-      {/* Emerging Half Globe anchored to bottom of screen (rest is cut off by overflow-hidden) */}
-      <div className="relative w-full h-[460px] sm:h-[580px] md:h-[720px] lg:h-[820px] -mb-[120px] sm:-mb-[180px] md:-mb-[240px] lg:-mb-[280px] flex items-center justify-center z-10 pointer-events-auto">
+      {/* Emerging Half Globe anchored lower down to give breathing room */}
+      <div className="relative w-full h-[500px] sm:h-[620px] md:h-[740px] lg:h-[840px] translate-y-10 sm:translate-y-14 md:translate-y-16 -mb-[140px] sm:-mb-[200px] md:-mb-[260px] lg:-mb-[300px] flex items-center justify-center z-10 pointer-events-auto">
         <div className="w-full h-full">
           <World data={sampleArcs} globeConfig={globeConfig} />
         </div>
         {/* Seamless bottom fade overlay to blend into next section */}
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#050507] via-[#050507]/60 to-transparent pointer-events-none z-20" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#050507] via-[#050507]/60 to-transparent pointer-events-none z-20" />
       </div>
     </div>
   );
