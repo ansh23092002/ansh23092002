@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 export const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** Big display word whose letters rise in one by one. */
-export function Letters({ text, delay = 0 }: { text: string; delay?: number }) {
+export function Letters({ text, delay = 0, play = true }: { text: string; delay?: number; play?: boolean }) {
   return (
     <span className="inline-flex overflow-hidden" aria-hidden>
       {text.split("").map((ch, i) => (
@@ -24,7 +24,7 @@ export function Letters({ text, delay = 0 }: { text: string; delay?: number }) {
           key={i}
           className="inline-block"
           initial={{ y: "105%" }}
-          animate={{ y: "0%" }}
+          animate={{ y: play ? "0%" : "105%" }}
           transition={{ duration: 1, ease: EASE, delay: delay + i * 0.04 }}
         >
           {ch === " " ? "\u00A0" : ch}

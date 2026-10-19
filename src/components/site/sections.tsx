@@ -16,6 +16,7 @@ import { education, experiences, profile, projects, stats } from "@/data/portfol
 import { cn } from "@/lib/utils";
 import { AnimatedTitle, CountUp, EASE, Eyebrow, Magnetic, Reveal, ScrollText, SectionHeading, Tilt } from "./motion";
 import { scrollToId, useLenis } from "./providers";
+import { GalleryHeading } from "@/components/threeui/gallery-heading";
 import { SkillUniverse } from "./skill-universe";
 
 const toneClasses = {
@@ -616,6 +617,19 @@ function ContactWord({
 
 const contactMessage = "Open to full-time full stack and frontend roles, government and enterprise projects, and high-impact freelance work. The fastest way to reach me is email.";
 
+// GalleryHeading in the site's charcoal + gold, carrying the contact line, always orbiting.
+const CONTACT_GALLERY = {
+  headline: ["LET’S BUILD", "SOMETHING GREAT"],
+  palette: [
+    "#c9a227", "#1b2225", "#e6cf85", "#3a4549", "#f7f0dc", "#8a6d12",
+    "#101415", "#d4ae35", "#5f6b6f", "#ece6d6", "#2d3436", "#f0c75e",
+  ],
+  ink: ["#c9a227", "#f7f3e8", "#101415"],
+  ghost: ["#c9a227", "#8c989c"],
+  background: "#2d3436",
+  idleSpeed: 0.35,
+} as const;
+
 export function Contact() {
   const contactRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: contactRef, offset: ["start start", "end end"] });
@@ -634,7 +648,8 @@ export function Contact() {
   return (
     <section ref={contactRef} id="contact" className="contact-scroll text-white" aria-labelledby="contact-heading">
       <div className="contact-stage">
-        <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 md:py-12">
+        <div className="mx-auto grid w-full max-w-7xl items-center gap-10 px-5 py-8 sm:px-8 md:py-12 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
+        <div className="min-w-0">
           <Reveal>
             <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-white/60">
               <span className="text-accent">05</span>
@@ -643,7 +658,7 @@ export function Contact() {
             </div>
           </Reveal>
 
-          <h2 id="contact-heading" aria-label="Let's build something great." className="mt-6 text-[clamp(2.75rem,8vw,6rem)] font-semibold leading-[1] tracking-[-0.045em] md:mt-8">
+          <h2 id="contact-heading" aria-label="Let's build something great." className="mt-6 text-[clamp(2.75rem,6vw,5.5rem)] font-semibold leading-[1] tracking-[-0.045em] md:mt-8">
             <span className="flex flex-wrap gap-x-[0.25em]">
               {["Let's", "build"].map((word, i) => (
                 <ContactWord key={word} progress={scrollYProgress} start={i * 0.06} end={i * 0.06 + 0.06}>{word}</ContactWord>
@@ -695,7 +710,7 @@ export function Contact() {
 
           <Reveal
             delay={0.4}
-            className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:mt-10 md:grid-cols-4"
+            className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:mt-10 md:grid-cols-4 lg:grid-cols-2"
           >
             {[
               { label: "LinkedIn", value: "in/ansh-sharma", href: profile.linkedin, external: true },
@@ -720,6 +735,22 @@ export function Contact() {
               </a>
             ))}
           </Reveal>
+        </div>
+
+        {/* ThreeUI GalleryHeading — Glitch Fall */}
+        <div className="shader-frame relative aspect-[4/3] w-full overflow-hidden bg-ink lg:aspect-auto lg:h-full lg:min-h-[560px] lg:self-stretch">
+        <GalleryHeading
+            variant="falling-diagonal"
+            mode="dark"
+            font="sans"
+            weight="700"
+            headlineSize={1.2}
+            hue={0}
+            saturation={1.0}
+            brightness={1.0}
+            customise={CONTACT_GALLERY}
+          />
+        </div>
         </div>
       </div>
     </section>

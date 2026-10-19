@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { Nav } from "@/components/site/nav";
 import { Hero } from "@/components/site/hero";
+import { Splash } from "@/components/site/splash";
 import { Work } from "@/components/site/work";
 import { About, Contact, Experience, Footer, Skills } from "@/components/site/sections";
 
@@ -14,6 +15,7 @@ export default function Home() {
 
   return (
     <>
+      <Splash />
       <Nav />
       <main>
         <Hero photo={photo} />

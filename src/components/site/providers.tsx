@@ -30,9 +30,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const instance = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      // Lerp follows the wheel continuously (feels smoother than a fixed-duration glide).
+      lerp: 0.1,
       smoothWheel: true,
+      wheelMultiplier: 1,
       autoRaf: true,
       anchors: { offset: -72 },
     });
