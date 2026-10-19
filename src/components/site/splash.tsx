@@ -5,6 +5,7 @@ import { preload } from "react-dom";
 import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, animate } from "motion/react";
 import { EASE } from "./motion";
 import { useLenis } from "./providers";
+import { INTRO_VIDEOS, lowerIntroQuality, selectIntroQuality, type IntroQuality, type NetworkConnection } from "@/lib/intro-video";
 
 // "Intro ready" signal: flips once the splash starts lifting, so the hero can begin its intro then.
 let introReady = false;
@@ -57,6 +58,12 @@ export function Splash() {
     document.body.style.overflow = "hidden";
 
     const video = videoRef.current;
+    const connection = (navigator as Navigator & { connection?: NetworkConnection }).connection;
+    let quality: IntroQuality = (Object.keys(INTRO_VIDEOS) as IntroQuality[]).find((key) => video?.getAttribute("src") === INTRO_VIDEOS[key]) ?? (window.matchMedia("(max-width: 1023px)").matches ? "low" : "medium");
+    let sourceVersion = 0;
+    let resumeAt: number | null = null;
+    let buffering: ReturnType<typeof setTimeout> | undefined;
+    let networkChange: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
     let frame = 0;
     let playPending = false;
@@ -71,6 +78,8 @@ export function Splash() {
       cancelled = true;
       clearTimeout(watchdog);
       clearTimeout(retry);
+      clearTimeout(buffering);
+      clearTimeout(networkChange);
       cancelAnimationFrame(frame);
       fallback?.stop();
       video?.pause();
@@ -82,12 +91,13 @@ export function Splash() {
     // Follow actual playback, including any time spent buffering.
     const track = () => {
       if (cancelled) return;
-      if (video && Number.isFinite(video.duration) && video.duration > 0) count.set(Math.min(99, (video.currentTime / video.duration) * 100));
+      if (video && resumeAt === null && Number.isFinite(video.duration) && video.duration > 0) count.set(Math.min(99, (video.currentTime / video.duration) * 100));
       frame = requestAnimationFrame(track);
     };
     const runFallback = () => {
       if (cancelled || fallback) return;
       clearTimeout(watchdog);
+      clearTimeout(buffering);
       cancelAnimationFrame(frame);
       fallback = animate(count, 100, { duration: FALLBACK_DURATION, ease: [0.3, 0, 0.2, 1] });
       fallback.then(finish);
@@ -98,9 +108,51 @@ export function Splash() {
       clearTimeout(watchdog);
       watchdog = setTimeout(runFallback, VIDEO_WAIT_MS);
     };
+    const changeQuality = (next: IntroQuality) => {
+      if (!video || cancelled || fallback || next === quality || video.ended) return;
+      // Keep the animation's position when changing renditions.
+      resumeAt = resumeAt ?? video.currentTime;
+      quality = next;
+      sourceVersion++;
+      playPending = false;
+      retries = 0;
+      clearTimeout(retry);
+      clearTimeout(buffering);
+      video.src = INTRO_VIDEOS[next];
+      video.load();
+      waitForVideo();
+    };
+    const onMetadata = () => {
+      if (!video || resumeAt === null) return;
+      if (Number.isFinite(video.duration) && video.duration > 0) {
+        video.currentTime = Math.min(resumeAt, Math.max(0, video.duration - 0.05));
+      }
+      resumeAt = null;
+    };
+    const onBuffering = () => {
+      waitForVideo();
+      clearTimeout(buffering);
+      buffering = setTimeout(() => {
+        const lower = lowerIntroQuality(quality);
+        if (lower) changeQuality(lower);
+      }, 1800);
+    };
+    const onNetworkChange = () => {
+      clearTimeout(networkChange);
+      networkChange = setTimeout(() => {
+        if (!video || (Number.isFinite(video.duration) && video.duration - video.currentTime < 2.5)) return;
+        changeQuality(selectIntroQuality(connection));
+      }, 700);
+    };
+    const onVideoError = () => {
+      const lower = lowerIntroQuality(quality);
+      if (lower) changeQuality(lower);
+      else runFallback();
+    };
     const onPlaying = () => {
       if (cancelled || fallback) return;
       clearTimeout(watchdog);
+      clearTimeout(buffering);
       setNeedsPlay(false);
       setHasPlayed(true);
       cancelAnimationFrame(frame);
@@ -115,10 +167,13 @@ export function Splash() {
       video.defaultMuted = true;
       video.playsInline = true;
       waitForVideo();
+      const version = sourceVersion;
       video.play().then(() => {
+        if (version !== sourceVersion) return;
         playPending = false;
         onPlaying();
       }).catch((error: unknown) => {
+        if (version !== sourceVersion) return;
         playPending = false;
         if (cancelled) return;
         const name = error && typeof error === "object" && "name" in error ? error.name : "";
@@ -141,15 +196,18 @@ export function Splash() {
 
     if (video) {
       video.addEventListener("ended", finish, { once: true });
-      video.addEventListener("error", runFallback, { once: true });
+      video.addEventListener("error", onVideoError);
       video.addEventListener("playing", onPlaying);
-      video.addEventListener("waiting", waitForVideo);
+      video.addEventListener("waiting", onBuffering);
       video.addEventListener("canplay", onReady);
-      // Native <source> selection starts loading before hydration. Do not reset it here.
+      video.addEventListener("loadedmetadata", onMetadata);
+      connection?.addEventListener("change", onNetworkChange);
+      // Keep native playback, upgrading its source only when the connection warrants it.
       video.muted = true;
       video.defaultMuted = true;
       video.playsInline = true;
       video.setAttribute("webkit-playsinline", "true");
+      changeQuality(selectIntroQuality(connection));
       play();
     } else {
       runFallback();
@@ -161,15 +219,19 @@ export function Splash() {
       playRef.current = null;
       clearTimeout(watchdog);
       clearTimeout(retry);
+      clearTimeout(buffering);
+      clearTimeout(networkChange);
       clearTimeout(finishDelay);
       fallback?.stop();
       cancelAnimationFrame(frame);
       cancelAnimationFrame(lock);
       video?.removeEventListener("ended", finish);
-      video?.removeEventListener("error", runFallback);
+      video?.removeEventListener("error", onVideoError);
       video?.removeEventListener("playing", onPlaying);
-      video?.removeEventListener("waiting", waitForVideo);
+      video?.removeEventListener("waiting", onBuffering);
       video?.removeEventListener("canplay", onReady);
+      video?.removeEventListener("loadedmetadata", onMetadata);
+      connection?.removeEventListener("change", onNetworkChange);
       video?.pause();
       document.documentElement.style.overflow = previousOverflow;
       document.body.style.overflow = previousBodyOverflow;
