@@ -40,12 +40,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
-      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
-      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+      { url: "/favicon.svg?v=2", type: "image/svg+xml", sizes: "any" },
+      { url: "/favicon.ico?v=2", sizes: "16x16 32x32 48x48" },
+      { url: "/favicon-32.png?v=2", type: "image/png", sizes: "32x32" },
+      { url: "/icon-512.png?v=2", type: "image/png", sizes: "512x512" },
     ],
-    shortcut: "/favicon.ico",
-    apple: "/apple-icon.png",
+    shortcut: "/favicon.ico?v=2",
+    apple: "/apple-icon.png?v=2",
   },
 };
 

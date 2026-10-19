@@ -166,29 +166,112 @@ html.lenis body {
   background: var(--subtle);
 }
 
-/* Keep the whole contact message on screen while new words arrive. */
-.contact-scroll {
-  position: relative;
-  min-height: 260svh;
-  background: var(--ink);
+/* Editorial project library: typography beside overlapping browser windows. */
+.work-library { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: clamp(24px, 3vw, 64px); min-height: 100dvh; padding: clamp(48px, 6vw, 100px) clamp(24px, 3.5vw, 80px); overflow: hidden; background: #111315; color: #f6f6f6; font-family: var(--font-mono); }
+.work-library-copy { position: relative; z-index: 4; padding-block: 16px; }
+.work-library-eyebrow { display: flex; align-items: center; gap: 14px; color: #96999f; font-size: clamp(10px, 1.1vw, 15px); line-height: 1.5; letter-spacing: 0.12em; text-transform: uppercase; }
+.work-library-eyebrow > span { width: 7px; height: 7px; flex-shrink: 0; border-radius: 50%; background: #d7be83; box-shadow: 0 0 0 6px rgb(215 190 131 / 10%); }
+.work-library h2 { margin-top: clamp(30px, 3.5vw, 64px); font-size: clamp(38px, 4.15vw, 86px); font-weight: 400; line-height: 1.2; letter-spacing: -0.065em; }
+.work-library h2 > span { color: #888c95; }
+.work-library-description { max-width: 38ch; margin-top: clamp(28px, 3vw, 54px); color: #92969f; font-size: clamp(14px, 1.35vw, 23px); line-height: 1.85; text-wrap: pretty; }
+.work-library-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px 28px; margin-top: clamp(30px, 3vw, 58px); }
+.work-library-primary { display: inline-flex; align-items: center; justify-content: space-between; gap: 30px; padding: 20px 24px; border: 1px solid #e5d29d; border-radius: 7px; background: #d7be83; color: #211e17; font-size: clamp(12px, 1.15vw, 18px); box-shadow: inset 0 2px 0 rgb(255 255 255 / 20%); transition: background 200ms, transform 200ms; }
+.work-library-primary:hover { background: #e5cf9c; transform: translateY(-2px); }
+.work-library-more { display: inline-flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 22px; border: 1px solid #f3f0e9; border-radius: 7px; background: #f3f0e9; color: #17191b; font-size: clamp(12px, 1vw, 16px); font-weight: 600; cursor: pointer; transition: background 200ms, border-color 200ms, transform 200ms; }
+.work-library-more:hover { background: #e5cf9c; border-color: #e5cf9c; transform: translateY(-2px); }
+.work-library-more:active { transform: translateY(0) scale(0.98); }
+.work-library-more > span { transition: transform 200ms; }
+.work-library-more:hover > span { transform: translateY(3px); }
+.work-library-note { display: flex; align-items: baseline; gap: 12px; margin-top: 24px; color: #92969f; font-size: clamp(10px, 1.05vw, 16px); line-height: 1.7; }
+.work-library-stack { position: relative; width: 100%; aspect-ratio: 1.12; max-height: 780px; isolation: isolate; }
+.work-browser { position: absolute; display: block; overflow: hidden; border: 1px solid #303235; border-radius: 12px; background: #0d0f11; box-shadow: 0 16px 32px rgb(0 0 0 / 12%); transition: transform 400ms var(--ease-out-expo), border-color 250ms, box-shadow 250ms; }
+.work-browser-back { z-index: 1; top: 0; left: 9%; width: 87%; transform: rotate(-5deg); }
+.work-browser-front { z-index: 3; top: 47%; left: 2%; width: 55%; transform: rotate(-3deg); }
+.work-browser-side { z-index: 2; top: 44%; right: -4%; width: 53%; transform: rotate(6deg); }
+.work-browser:hover, .work-browser:focus-visible { z-index: 5; border-color: #d7be83; transform: rotate(0deg) translateY(-10px) scale(1.04); box-shadow: 0 24px 60px rgb(0 0 0 / 32%); }
+.work-browser-toolbar { display: flex; align-items: center; gap: 10px; min-height: 34px; padding: 8px 12px; border-bottom: 1px solid #303235; color: #92969f; }
+.work-browser-dots { display: flex; gap: 4px; flex-shrink: 0; }
+.work-browser-dots > i { width: 4px; height: 4px; border-radius: 50%; background: #505359; }
+.work-browser-category { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: clamp(9px, 1.1vw, 17px); }
+.work-browser-arrow { color: #f5f5f5; font-size: 12px; }
+.work-browser-image { position: relative; aspect-ratio: 1.6; overflow: hidden; background: #1b1e21; }
+.work-browser-back .work-browser-image { aspect-ratio: 1.75; }
+.work-browser-caption { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 15px 14px; font-size: clamp(10px, 1vw, 16px); }
+.work-browser-caption > :first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.work-browser-caption > :last-child { color: #92969f; font-size: 11px; }
+@media (max-width: 1023px) {
+  .work-library { grid-template-columns: 1fr; min-height: auto; gap: 56px; padding-block: 72px 100px; }
+  .work-library-copy { max-width: 680px; }
+  .work-library h2 { font-size: clamp(38px, 7vw, 64px); }
+  .work-library-description { font-size: 16px; }
+  .work-library-stack { width: 94%; max-width: 760px; margin-inline: auto; }
 }
-
-.contact-stage {
-  position: sticky;
-  top: 0;
-  display: flex;
-  min-height: 100svh;
-  align-items: center;
+@media (max-width: 639px) {
+  .work-library { padding-inline: 22px; padding-block: 48px 64px; gap: 48px; }
+  .work-library h2 { font-size: clamp(32px, 8.8vw, 48px); }
+  .work-library-description { font-size: 13px; }
+  .work-library-eyebrow { font-size: 9px; letter-spacing: 0.08em; }
+  .work-library-primary, .work-library-more { padding: 16px 18px; }
+  .work-library-actions { gap: 12px 20px; }
+  .work-library-stack { width: 100%; aspect-ratio: 0.95; }
+  .work-browser { border-radius: 7px; }
+  .work-browser-front { top: 43%; left: 0; width: 59%; }
+  .work-browser-side { top: 48%; right: -1%; width: 55%; }
+  .work-browser-toolbar { min-height: 26px; padding: 6px 8px; gap: 6px; }
+  .work-browser-dots { gap: 2px; }
+  .work-browser-dots > i { width: 3px; height: 3px; }
+  .work-browser-caption { padding: 10px 8px; font-size: 9px; }
 }
-
-@media (max-height: 740px) {
-  .contact-scroll { min-height: auto; }
-  .contact-stage { position: relative; }
-  .contact-word { opacity: 1 !important; transform: none !important; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .contact-scroll { min-height: auto; }
-  .contact-stage { position: relative; }
-  .contact-word { opacity: 1 !important; transform: none !important; }
+  .work-browser, .work-library-primary, .work-library-more, .work-library-more > span { transition: none; }
+}
+
+/* A personal contact desk: one email action and four simple ways to connect. */
+.contact-desk { padding: clamp(64px, 8vw, 120px) 24px clamp(48px, 6vw, 88px); background: #fff; color: #252b2e; }
+.contact-desk-inner { max-width: 900px; margin-inline: auto; text-align: center; }
+.contact-desk-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 500; color: #657076; }
+.contact-desk-eyebrow > span { width: 6px; height: 6px; border-radius: 50%; background: #b28e28; }
+.contact-desk-title { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 2.2vw, 32px); margin-top: 26px; font-size: clamp(64px, 9vw, 128px); font-weight: 600; letter-spacing: -0.075em; line-height: 1.1; }
+.contact-desk-dot { color: #b28e28; }
+.contact-desk-portrait { position: relative; width: clamp(76px, 9.5vw, 120px); height: clamp(76px, 9.5vw, 120px); flex-shrink: 0; overflow: hidden; border-radius: 50%; border: 5px solid #f3f1ea; background: #eae5d9; transform: rotate(-7deg); transition: transform 400ms var(--ease-out-expo); }
+.contact-desk-portrait:hover { transform: rotate(0deg) scale(1.06); }
+.contact-desk-description { margin: 24px auto 0; max-width: 50ch; font-size: 15px; line-height: 1.8; color: #657076; }
+.contact-desk-email { display: flex; align-items: center; gap: 14px; max-width: 760px; margin: 40px auto 0; padding: 18px 22px; border: 1px solid #e3e6e4; border-radius: 16px; background: #f7f8f6; text-align: left; transition: border-color 200ms, background 200ms; }
+.contact-desk-email:focus-within, .contact-desk-email:hover { border-color: #c9b47e; background: #faf9f5; }
+.contact-desk-email-link { display: flex; flex: 1; min-width: 0; align-items: center; gap: 18px; }
+.contact-desk-mail-icon { display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; flex-shrink: 0; border-radius: 12px; background: white; color: #5d6568; }
+.contact-desk-mail-icon svg { width: 24px; height: 24px; }
+.contact-desk-email-text { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 6px; }
+.contact-desk-email-text > span { color: #737d80; font-size: 11px; }
+.contact-desk-email-text strong { font-size: clamp(16px, 2.25vw, 26px); font-weight: 500; letter-spacing: -0.045em; overflow-wrap: anywhere; }
+.contact-desk-send { display: inline-flex; justify-content: center; align-items: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #2d3436; color: white; font-size: 24px; transition: transform 200ms, background 200ms; }
+.contact-desk-email-link:hover .contact-desk-send { transform: rotate(45deg); background: #8a6d12; }
+.contact-desk-copy { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex-shrink: 0; border-radius: 8px; color: #657076; cursor: pointer; transition: background 200ms, color 200ms; }
+.contact-desk-copy:hover { color: #2d3436; background: #e9e9e2; }
+.contact-desk-copy svg { width: 18px; height: 18px; }
+.contact-desk-status { min-height: 24px; padding-top: 8px; color: #8a6d12; font-size: 11px; line-height: 1.5; }
+.contact-desk-socials { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 760px; margin: 12px auto 0; gap: 12px; }
+.contact-desk-socials a { display: flex; align-items: center; gap: 10px; padding: 17px 16px; border: 1px solid #e5e8e6; border-radius: 10px; text-align: left; font-size: 12px; font-weight: 500; transition: border-color 200ms, transform 200ms, background 200ms; }
+.contact-desk-socials a:hover { transform: translateY(-3px); border-color: #c9b47e; background: #faf9f5; }
+.contact-desk-social-icon { width: 18px; height: 18px; flex-shrink: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.06em; line-height: 1; }
+.contact-desk-socials a > :last-child { margin-left: auto; color: #899294; font-size: 15px; }
+.contact-desk-location { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-top: 32px; color: #788285; font-size: 11px; line-height: 1.6; }
+.contact-desk-location > span { color: #b28e28; }
+@media (max-width: 639px) {
+  .contact-desk { padding-inline: 20px; }
+  .contact-desk-title { font-size: clamp(42px, 11vw, 70px); gap: 12px; }
+  .contact-desk-portrait { width: 64px; height: 64px; border-width: 3px; }
+  .contact-desk-description { max-width: 34ch; font-size: 13px; }
+  .contact-desk-email { margin-top: 30px; padding: 14px; gap: 4px; border-radius: 12px; }
+  .contact-desk-email-link { gap: 10px; }
+  .contact-desk-mail-icon { display: none; }
+  .contact-desk-email-text strong { font-size: clamp(13px, 3.7vw, 22px); }
+  .contact-desk-send { width: 32px; height: 32px; font-size: 19px; }
+  .contact-desk-copy { width: 30px; height: 32px; }
+  .contact-desk-socials { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .contact-desk-socials a { padding: 15px; }
+  .contact-desk-location { font-size: 10px; gap: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-desk-portrait, .contact-desk-send, .contact-desk-copy, .contact-desk-email, .contact-desk-socials a { transition: none; }
 }

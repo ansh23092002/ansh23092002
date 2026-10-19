@@ -3,20 +3,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
-  AnimatePresence,
   motion,
   useMotionValue,
   useMotionValueEvent,
   useScroll,
   useSpring,
   useTransform,
-  type MotionValue,
 } from "motion/react";
 import { education, experiences, profile, projects, stats } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
-import { AnimatedTitle, CountUp, EASE, Eyebrow, Magnetic, Reveal, ScrollText, SectionHeading, Tilt } from "./motion";
+import { AnimatedTitle, CountUp, Eyebrow, Reveal, ScrollText, Tilt } from "./motion";
 import { scrollToId, useLenis } from "./providers";
-import { GalleryHeading } from "@/components/threeui/gallery-heading";
 import { SkillUniverse } from "./skill-universe";
 
 const toneClasses = {
@@ -594,164 +591,55 @@ export function Skills() {
 /* Contact                                                              */
 /* ------------------------------------------------------------------ */
 
-function ContactWord({
-  children,
-  progress,
-  start,
-  end,
-}: {
-  children: React.ReactNode;
-  progress: MotionValue<number>;
-  start: number;
-  end: number;
-}) {
-  const opacity = useTransform(progress, [start, end], [0, 1]);
-  const y = useTransform(progress, [start, end], [16, 0]);
-
-  return (
-    <motion.span aria-hidden style={{ opacity, y }} className="contact-word inline-block">
-      {children}
-    </motion.span>
-  );
-}
-
-const contactMessage = "Open to full-time full stack and frontend roles, government and enterprise projects, and high-impact freelance work. The fastest way to reach me is email.";
-
-// GalleryHeading in the site's charcoal + gold, carrying the contact line, always orbiting.
-const CONTACT_GALLERY = {
-  headline: ["LET’S BUILD", "SOMETHING GREAT"],
-  palette: [
-    "#c9a227", "#1b2225", "#e6cf85", "#3a4549", "#f7f0dc", "#8a6d12",
-    "#101415", "#d4ae35", "#5f6b6f", "#ece6d6", "#2d3436", "#f0c75e",
-  ],
-  ink: ["#c9a227", "#f7f3e8", "#101415"],
-  ghost: ["#c9a227", "#8c989c"],
-  background: "#2d3436",
-  idleSpeed: 0.35,
-} as const;
-
 export function Contact() {
-  const contactRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: contactRef, offset: ["start start", "end end"] });
-  const [copied, setCopied] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (copyTimer.current) clearTimeout(copyTimer.current);
+  }, []);
 
   const copyEmail = async () => {
+    if (copyTimer.current) clearTimeout(copyTimer.current);
     try {
       await navigator.clipboard.writeText(profile.email);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopyState("copied");
     } catch {
-      window.location.href = `mailto:${profile.email}`;
+      setCopyState("error");
     }
+    copyTimer.current = setTimeout(() => setCopyState("idle"), 3000);
   };
 
   return (
-    <section ref={contactRef} id="contact" className="contact-scroll text-white" aria-labelledby="contact-heading">
-      <div className="contact-stage">
-        <div className="mx-auto grid w-full max-w-7xl items-center gap-10 px-5 py-8 sm:px-8 md:py-12 lg:grid-cols-[1.1fr_1fr] lg:gap-12">
-        <div className="min-w-0">
-          <Reveal>
-            <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-white/60">
-              <span className="text-accent">05</span>
-              <span className="h-px w-8 bg-white/25" />
-              <span>Contact</span>
-            </div>
-          </Reveal>
+    <section id="contact" className="contact-desk" aria-labelledby="contact-heading">
+      <div className="contact-desk-inner">
+        <p className="contact-desk-eyebrow"><span aria-hidden="true" />Have a project in mind?</p>
+        <h2 id="contact-heading" className="contact-desk-title">
+          <span>Let&apos;s</span>
+          <span className="contact-desk-portrait"><Image src="/me.png" alt="Ansh Sharma" fill sizes="(max-width: 639px) 72px, 120px" className="object-cover object-top" /></span>
+          <span>talk<span className="contact-desk-dot">.</span></span>
+        </h2>
+        <p className="contact-desk-description">A new product, a role on your team, or an idea worth building.<br className="hidden sm:block" /> I&apos;d love to hear about it.</p>
 
-          <h2 id="contact-heading" aria-label="Let's build something great." className="mt-6 text-[clamp(2.75rem,6vw,5.5rem)] font-semibold leading-[1] tracking-[-0.045em] md:mt-8">
-            <span className="flex flex-wrap gap-x-[0.25em]">
-              {["Let's", "build"].map((word, i) => (
-                <ContactWord key={word} progress={scrollYProgress} start={i * 0.06} end={i * 0.06 + 0.06}>{word}</ContactWord>
-              ))}
-            </span>
-            <span className="mt-1 flex flex-wrap gap-x-[0.25em] text-accent">
-              {["something", "great."].map((word, i) => (
-                <ContactWord key={word} progress={scrollYProgress} start={0.12 + i * 0.06} end={0.18 + i * 0.06}>{word}</ContactWord>
-              ))}
-            </span>
-          </h2>
-
-          <p className="mt-6 flex max-w-xl flex-wrap gap-x-[0.28em] text-base leading-relaxed text-white/75 sm:text-lg md:mt-8">
-            <span className="sr-only">{contactMessage}</span>
-            {contactMessage.split(" ").map((word, i, words) => (
-              <ContactWord key={i} progress={scrollYProgress} start={0.24 + i / words.length * 0.5} end={0.24 + (i + 1) / words.length * 0.5}>{word}</ContactWord>
-            ))}
-          </p>
-
-          <Reveal delay={0.3} className="mt-8 flex flex-wrap items-center gap-3">
-            <Magnetic>
-              <a
-                href={`mailto:${profile.email}`}
-                className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-4 text-sm font-semibold text-ink transition-colors hover:bg-white sm:text-base"
-              >
-                {profile.email}
-                <span className="transition-transform duration-500 ease-out-expo group-hover:translate-x-1">→</span>
-              </a>
-            </Magnetic>
-            <button
-              type="button"
-              onClick={copyEmail}
-              className="relative inline-flex h-[52px] min-w-[120px] items-center justify-center overflow-hidden rounded-full border border-white/25 px-6 text-sm font-medium text-white transition-colors hover:border-white sm:h-[58px]"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.span
-                  key={copied ? "copied" : "copy"}
-                  initial={{ y: "120%" }}
-                  animate={{ y: "0%" }}
-                  exit={{ y: "-120%" }}
-                  transition={{ duration: 0.35, ease: EASE }}
-                  className="block"
-                >
-                  {copied ? "Copied ✓" : "Copy email"}
-                </motion.span>
-              </AnimatePresence>
-            </button>
-          </Reveal>
-
-          <Reveal
-            delay={0.4}
-            className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 md:mt-10 md:grid-cols-4 lg:grid-cols-2"
-          >
-            {[
-              { label: "LinkedIn", value: "in/ansh-sharma", href: profile.linkedin, external: true },
-              { label: "GitHub", value: "ansh23092002", href: profile.github, external: true },
-              { label: "Phone", value: profile.phone, href: profile.phoneHref, external: false },
-              { label: "Résumé", value: "Download PDF", href: profile.resume, external: false, download: true },
-            ].map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                {...(l.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                {...(l.download ? { download: profile.resumeFileName } : {})}
-                className="group flex flex-col gap-3 bg-ink p-4 transition-colors duration-300 hover:bg-[#363f42] sm:p-5"
-              >
-                <span className="flex items-center justify-between font-mono text-xs uppercase tracking-[0.15em] text-white/60">
-                  {l.label}
-                  <span className="transition-all duration-500 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent">
-                    ↗
-                  </span>
-                </span>
-                <span className="truncate text-sm text-white sm:text-base">{l.value}</span>
-              </a>
-            ))}
-          </Reveal>
+        <div className="contact-desk-email">
+          <a href={`mailto:${profile.email}`} className="contact-desk-email-link">
+            <span className="contact-desk-mail-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m4 7 8 6 8-6" /></svg></span>
+            <span className="contact-desk-email-text"><span>Drop me a line</span><strong>{profile.email}</strong></span>
+            <span className="contact-desk-send" aria-hidden="true">↗</span>
+          </a>
+          <button type="button" className="contact-desk-copy" onClick={copyEmail} aria-label={copyState === "copied" ? "Email address copied" : "Copy email address"} title="Copy email address">
+            {copyState === "copied" ? <span aria-hidden="true">✓</span> : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" /></svg>}
+          </button>
         </div>
+        <p className="contact-desk-status" role="status">{copyState === "error" ? "Couldn’t copy. Select the address, or click it to open your mail app." : copyState === "copied" ? "Email copied to clipboard." : ""}</p>
 
-        {/* ThreeUI GalleryHeading — Glitch Fall */}
-        <div className="shader-frame relative aspect-[4/3] w-full overflow-hidden bg-ink lg:aspect-auto lg:h-full lg:min-h-[560px] lg:self-stretch">
-        <GalleryHeading
-            variant="falling-diagonal"
-            mode="dark"
-            font="sans"
-            weight="700"
-            headlineSize={1.2}
-            hue={0}
-            saturation={1.0}
-            brightness={1.0}
-            customise={CONTACT_GALLERY}
-          />
-        </div>
-        </div>
+        <nav className="contact-desk-socials" aria-label="Contact and social links">
+          <a href={profile.linkedin} target="_blank" rel="noopener noreferrer"><span className="contact-desk-social-icon" aria-hidden="true">in</span><span>LinkedIn</span><span aria-hidden="true">↗</span></a>
+          <a href={profile.github} target="_blank" rel="noopener noreferrer"><svg className="contact-desk-social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.86c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.83c.85 0 1.71.11 2.51.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" /></svg><span>GitHub</span><span aria-hidden="true">↗</span></a>
+          <a href={profile.phoneHref} aria-label={`Call Ansh Sharma at ${profile.phone}`}><svg className="contact-desk-social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M7 3H4a1 1 0 0 0-1 1 17 17 0 0 0 17 17 1 1 0 0 0 1-1v-3l-5-2-2 2a13 13 0 0 1-7-7l2-2-2-5Z" /></svg><span>Call me</span><span aria-hidden="true">↗</span></a>
+          <a href={profile.resume} download={profile.resumeFileName}><svg className="contact-desk-social-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 15v5h16v-5" /></svg><span>Résumé</span><span aria-hidden="true">↓</span></a>
+        </nav>
+        <p className="contact-desk-location">Based in {profile.location}<span aria-hidden="true">·</span>Open to roles &amp; freelance projects</p>
       </div>
     </section>
   );

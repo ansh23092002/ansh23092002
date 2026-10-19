@@ -618,6 +618,60 @@ function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(maximum, Math.max(minimum, value));
 }
 
+type GalleryProject = { image: string; title: string; link: string };
+
+/** Keep the authored 3D orbit and clock, correcting screenshot orientation. */
+function withProjectTiles(source: string, projects: readonly GalleryProject[]) {
+  const data = JSON.stringify(projects).replace(/</g, "\\u003c");
+  return source
+    .replace("var TEX = buildTextures();", `var TEX = buildTextures();
+var PROJECTS = ${data}, projectHits = [], hoveredProject = -1;
+PROJECTS.forEach(function(item, index){
+  var image = new Image();
+  image.onload = function(){
+    var front = mkc(TS,TS), x = front.getContext('2d');
+    x.fillStyle = '#ffffff'; x.fillRect(0,0,TS,TS);
+    var scale = TS / image.width;
+    var height = image.height * scale;
+    x.drawImage(image, 0, (TS-TS*RING.aspect)/2, TS, height);
+    var back = mkc(TS,TS), y = back.getContext('2d');
+    y.drawImage(front,0,0); y.fillStyle = 'rgba(10,12,24,0.35)'; y.fillRect(0,0,TS,TS);
+    for (var i=index;i<TEX.front.length;i+=PROJECTS.length){ TEX.front[i]=front; TEX.back[i]=back; }
+    settled = false;
+  };
+  image.src = item.image;
+});
+function hitProject(event){
+  var bounds = cv.getBoundingClientRect();
+  var px = (event.clientX-bounds.left)*cv.width/bounds.width;
+  var py = (event.clientY-bounds.top)*cv.height/bounds.height;
+  for(var i=projectHits.length-1;i>=0;i--){
+    var h=projectHits[i], dx=px-h.x, dy=py-h.y, det=h.ex*h.fy-h.ey*h.fx;
+    if(Math.abs(det)<0.4) continue;
+    var u=(dx*h.fy-dy*h.fx)/det, v=(dy*h.ex-dx*h.ey)/det;
+    if(Math.abs(u)<=1 && Math.abs(v)<=RING.aspect) return h.i;
+  }
+  return -1;
+}
+document.documentElement.addEventListener('pointermove', function(event){
+  hoveredProject=hitProject(event); document.body.style.cursor=hoveredProject<0?'default':'pointer'; settled=false;
+});
+document.documentElement.addEventListener('pointerleave', function(){ hoveredProject=-1; settled=false; });
+document.documentElement.addEventListener('click', function(event){
+  var index=hitProject(event);
+  if(index>=0) window.open(PROJECTS[index%PROJECTS.length].link, '_blank', 'noopener,noreferrer');
+});`)
+    .replace("  if (Math.abs(ex*fy - ey*fx) < 0.4) return;", `  // Preserve the authored projected plane, including tilt and foreshortening.
+  // Reverse its local axes only when the screenshot would be upside down or mirrored.
+  if (fy < 0) { ex = -ex; ey = -ey; fx = -fx; fy = -fy; }
+  if (ex*fy - ey*fx < 0) { ex = -ex; ey = -ey; }
+  var grow = i === hoveredProject ? 1.18 : 1;
+  ex *= grow; ey *= grow; fx *= grow; fy *= grow;
+  projectHits.push({i:i,x:p0[0],y:p0[1],ex:ex,ey:ey,fx:fx,fy:fy});
+  if (Math.abs(ex*fy - ey*fx) < 0.4) return;`)
+    .replace("function render(t){", "function render(t){\n  projectHits = [];");
+}
+
 function effectBackground(definition: EffectDefinition, mode: EffectMode) {
   return definition.theme?.[`${mode}Background`] ?? definition.background;
 }
@@ -741,10 +795,12 @@ function NeuformIsolatedEffect({
   trackPointerHover,
   className,
   style,
+  allowProjectLinks,
 }: NeuformIsolatedEffectProps & {
   definition: EffectDefinition;
   runtime?: Readonly<Record<string, number | string>>;
   trackPointerHover?: boolean;
+  allowProjectLinks?: boolean;
 }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const safeMode: EffectMode = mode === "light" ? "light" : "dark";
@@ -815,7 +871,7 @@ function NeuformIsolatedEffect({
       data-mode={safeMode}
       title={definition.title}
       srcDoc={source}
-      sandbox="allow-scripts"
+      sandbox={allowProjectLinks ? "allow-scripts allow-popups allow-popups-to-escape-sandbox" : "allow-scripts"}
       loading="eager"
       style={{
         display: "block",
@@ -845,6 +901,10 @@ export type GalleryHeadingCustomisation = {
   background?: string;
   /** orbit speed with no pointer over it (0 = authored behaviour: still until hovered; 1 = hover speed) */
   idleSpeed?: number;
+  /** Enlarge the whole composition while preserving its authored motion. */
+  sceneScale?: number;
+  /** Actual screenshots, using the same authored ring geometry and animation. */
+  projects?: readonly GalleryProject[];
 };
 
 /* ink width per character, matched to the authored lines (≈147 design units per glyph) */
@@ -883,6 +943,9 @@ export function GalleryHeading({
       ...(c.background ? { background: c.background, theme: { lightBackground: c.background, darkBackground: c.background } } : {}),
       transformSource: (source, mode) => {
         let out = transformGalleryHeadingSource(source, mode, configuration);
+        if (c.sceneScale) {
+          out = out.replace("  K = S / DW;", `  K = S / DW * ${clamp(c.sceneScale, 0.6, 1.8)};`);
+        }
         if (c.ghost) out = out.replace("var HEAD_GHOST = ['#ff2f6d','#00e6ff'];", `var HEAD_GHOST = ${JSON.stringify(c.ghost)};`);
         if (c.background) {
           const authored = mode === "light" ? "#f4f7fb" : "#000000";
@@ -894,6 +957,7 @@ export function GalleryHeading({
           /* keep orbiting with no pointer over it; hovering still brings it up to full speed */
           out = out.replaceAll("(hovering ? 1 : 0)", `(hovering ? 1 : ${idle})`);
         }
+        if (c.projects?.length) out = withProjectTiles(out, c.projects);
         return out;
       },
     };
@@ -911,5 +975,5 @@ export function GalleryHeading({
     };
   }, [base, font, headlineSize, weight]);
 
-  return <NeuformIsolatedEffect {...props} definition={definition} runtime={runtime} trackPointerHover />;
+  return <NeuformIsolatedEffect {...props} definition={definition} runtime={runtime} trackPointerHover allowProjectLinks={Boolean(customise?.projects?.length)} />;
 }
