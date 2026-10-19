@@ -14,7 +14,7 @@ import { education, experiences, profile, projects, stats } from "@/data/portfol
 import { cn } from "@/lib/utils";
 import { AnimatedTitle, CountUp, Eyebrow, Reveal, ScrollText, Tilt } from "./motion";
 import { scrollToId, useLenis } from "./providers";
-import { SkillUniverse } from "./skill-universe";
+import { LazySkills } from "./lazy-skills";
 
 const toneClasses = {
   accent: "bg-accent text-ink",
@@ -582,7 +582,7 @@ export function Experience() {
 export function Skills() {
   return (
     <section id="skills">
-      <SkillUniverse index="04" />
+      <LazySkills />
     </section>
   );
 }
@@ -616,7 +616,7 @@ export function Contact() {
         <p className="contact-desk-eyebrow"><span aria-hidden="true" />Have a project in mind?</p>
         <h2 id="contact-heading" className="contact-desk-title">
           <span>Let&apos;s</span>
-          <span className="contact-desk-portrait"><Image src="/me.png" alt="Ansh Sharma" fill sizes="(max-width: 639px) 72px, 120px" className="object-cover object-top" /></span>
+          <span className="contact-desk-portrait"><Image src="/me.webp" alt="Ansh Sharma" fill sizes="(max-width: 639px) 72px, 120px" className="object-cover object-top" /></span>
           <span>talk<span className="contact-desk-dot">.</span></span>
         </h2>
         <p className="contact-desk-description">A new product, a role on your team, or an idea worth building.<br className="hidden sm:block" /> I&apos;d love to hear about it.</p>

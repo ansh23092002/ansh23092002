@@ -27,7 +27,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const lenis = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce), (pointer: coarse)").matches) return;
 
     const instance = new Lenis({
       // Lerp follows the wheel continuously (feels smoother than a fixed-duration glide).

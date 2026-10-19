@@ -76,7 +76,7 @@ export const projects = [
   {
     title: "CGMSC EMSA",
     category: "GovTech · Govt. of Chhattisgarh",
-    image: "/projects/cgmsc-emis.png",
+    image: "/projects/cgmsc-emis.webp",
     featured: true,
     subtitle: "State medical equipment & inventory platform",
     role: "Project Owner",

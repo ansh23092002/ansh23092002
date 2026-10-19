@@ -95,7 +95,7 @@ export function Hero({ photo }: { photo?: string }) {
               src={photo}
               alt=""
               fill
-              priority
+              preload
               sizes="(min-width: 768px) 768px, 100vw"
               className="object-contain object-right-bottom [mask-composite:intersect] [mask-image:linear-gradient(to_right,transparent,black_18%,black_82%,transparent),linear-gradient(to_bottom,black_70%,transparent)]"
             />

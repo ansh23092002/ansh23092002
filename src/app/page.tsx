@@ -7,7 +7,7 @@ import { Work } from "@/components/site/work";
 import { About, Contact, Experience, Footer, Skills } from "@/components/site/sections";
 
 // Drop a portrait into public/ as me.png (or .jpg/.webp) and it becomes the hero watermark.
-const PHOTO_FILES = ["me.png", "me.jpg", "me.jpeg", "me.webp"];
+const PHOTO_FILES = ["me.webp", "me.png", "me.jpg", "me.jpeg"];
 
 export default function Home() {
   const found = PHOTO_FILES.find((f) => fs.existsSync(path.join(process.cwd(), "public", f)));

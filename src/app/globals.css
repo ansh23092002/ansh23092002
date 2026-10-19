@@ -227,8 +227,8 @@ html.lenis body {
 }
 
 /* A personal contact desk: one email action and four simple ways to connect. */
-.contact-desk { padding: clamp(64px, 8vw, 120px) 24px clamp(48px, 6vw, 88px); background: #fff; color: #252b2e; }
-.contact-desk-inner { max-width: 900px; margin-inline: auto; text-align: center; }
+.contact-desk { display: grid; align-items: center; min-height: 100svh; min-height: 100dvh; padding: clamp(32px, 6dvh, 80px) max(24px, env(safe-area-inset-right)) clamp(32px, 6dvh, 80px) max(24px, env(safe-area-inset-left)); background: #fff; color: #252b2e; }
+.contact-desk-inner { width: 100%; max-width: 1000px; min-width: 0; margin-inline: auto; text-align: center; }
 .contact-desk-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 500; color: #657076; }
 .contact-desk-eyebrow > span { width: 6px; height: 6px; border-radius: 50%; background: #b28e28; }
 .contact-desk-title { display: flex; align-items: center; justify-content: center; gap: clamp(12px, 2.2vw, 32px); margin-top: 26px; font-size: clamp(64px, 9vw, 128px); font-weight: 600; letter-spacing: -0.075em; line-height: 1.1; }
@@ -258,7 +258,7 @@ html.lenis body {
 .contact-desk-location { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; margin-top: 32px; color: #788285; font-size: 11px; line-height: 1.6; }
 .contact-desk-location > span { color: #b28e28; }
 @media (max-width: 639px) {
-  .contact-desk { padding-inline: 20px; }
+  .contact-desk { padding: max(32px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); }
   .contact-desk-title { font-size: clamp(42px, 11vw, 70px); gap: 12px; }
   .contact-desk-portrait { width: 64px; height: 64px; border-width: 3px; }
   .contact-desk-description { max-width: 34ch; font-size: 13px; }
@@ -272,6 +272,45 @@ html.lenis body {
   .contact-desk-socials a { padding: 15px; }
   .contact-desk-location { font-size: 10px; gap: 7px; }
 }
+@media (max-width: 359px) {
+  .contact-desk-title { gap: 9px; font-size: 40px; }
+  .contact-desk-portrait { width: 54px; height: 54px; }
+  .contact-desk-email { padding: 12px 10px; }
+  .contact-desk-email-link { gap: 6px; }
+  .contact-desk-email-text strong { font-size: 12px; }
+  .contact-desk-socials a { padding: 13px 11px; }
+}
+@media (max-height: 740px) {
+  .contact-desk-title { margin-top: 18px; }
+  .contact-desk-description { margin-top: 16px; }
+  .contact-desk-email { margin-top: 24px; }
+  .contact-desk-location { margin-top: 22px; }
+}
+@media (min-width: 640px) and (max-height: 740px) {
+  .contact-desk-title { font-size: clamp(64px, 13dvh, 96px); }
+  .contact-desk-portrait { width: 80px; height: 80px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .contact-desk-portrait, .contact-desk-send, .contact-desk-copy, .contact-desk-email, .contact-desk-socials a { transition: none; }
+}
+
+/* Keep the complete intro visible and its controls reachable on phones. */
+.splash-screen { width: 100%; height: 100svh; height: 100dvh; min-height: 0; touch-action: none; overscroll-behavior: none; }
+.splash-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; background: #ececec; }
+.splash-skip { top: max(20px, env(safe-area-inset-top)); right: max(20px, env(safe-area-inset-right)); min-height: 44px; }
+.splash-progress { right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom)); }
+.splash-play { display: none; position: absolute; top: 50%; left: 50%; z-index: 10; min-height: 48px; padding: 12px 24px; border-radius: 999px; background: var(--ink); color: white; font-size: 14px; font-weight: 500; cursor: pointer; transform: translate(-50%, -50%); }
+.splash-play.is-visible { display: inline-flex; align-items: center; justify-content: center; }
+@media (max-width: 639px) {
+  .splash-video { top: 14%; bottom: auto; height: 58%; mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent); }
+}
+@media (max-width: 767px) {
+  .contact-desk-send, .contact-desk-copy { width: 44px; min-height: 44px; }
+}
+@media (max-height: 600px) {
+  .mobile-nav-panel { padding-top: max(16px, env(safe-area-inset-top)); }
+  .mobile-nav-panel nav a { padding-block: 12px; font-size: 32px; }
+  .mobile-nav-panel nav + div { margin-top: 24px; }
+  .splash-progress { gap: 6px; }
+  .splash-progress > div:first-child > span:first-child { font-size: 56px; }
 }

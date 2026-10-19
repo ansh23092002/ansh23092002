@@ -47,14 +47,22 @@ export function Nav() {
   }, []);
 
   useEffect(() => {
-    if (menuOpen) lenis.current?.stop();
-    else lenis.current?.start();
+    if (!menuOpen) return;
+    const instance = lenis.current;
+    const previousOverflow = document.body.style.overflow;
+    instance?.stop();
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      instance?.start();
+    };
   }, [menuOpen, lenis]);
 
   const go = (e: React.MouseEvent, id: string) => {
     setMenuOpen(false);
     if (id !== "top" && !document.getElementById(id)) return; // Not on the home page: follow the link.
     e.preventDefault();
+    if (menuOpen) lenis.current?.start();
     scrollToId(lenis, id);
   };
 
@@ -124,7 +132,8 @@ export function Nav() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="fixed inset-0 z-40 flex flex-col bg-ink px-5 pt-10 pb-[calc(7rem+env(safe-area-inset-bottom))] text-white md:hidden"
+            data-lenis-prevent
+            className="mobile-nav-panel fixed inset-0 z-40 flex flex-col overflow-y-auto overscroll-contain bg-ink px-5 pt-10 pb-[calc(7rem+env(safe-area-inset-bottom))] text-white md:hidden"
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
             exit={{ clipPath: "inset(0 0 100% 0)" }}
