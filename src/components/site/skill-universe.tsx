@@ -54,7 +54,9 @@ const FEATURED = ["Next.js", "React.js", "TypeScript", "Node.js", "AWS EC2", "Do
 const ALL_SKILLS = skillElements.map((e) => e.name);
 const DESKTOP_TILES: Tile[] = (() => {
   const names = [...FEATURED.filter((n) => ALL_SKILLS.includes(n)), ...ALL_SKILLS.filter((n) => !FEATURED.includes(n))];
-  const placed: { x: number; y: number }[] = [];
+  const placed: { x: number; y: number; s: number }[] = [];
+  // Same growth as wallTransform: tiles near the screen edges are drawn bigger, so need more room.
+  const sizeAt = (x: number) => 0.72 + (Math.abs(x - 50) / 50) * 0.6;
   const round = (v: number) => Math.round(v * 100) / 100; // server and client must print identical styles
   let seed = 1;
   const next = () => {
@@ -69,15 +71,15 @@ const DESKTOP_TILES: Tile[] = (() => {
       const x = 3 + next() * 94; // edge panels may bleed slightly off-screen, like the reference
       const y = 8 + next() * 84;
       if (featured && Math.abs(x - 50) < 14) continue;
-      // Stage is ~1.7× wider than tall, so scale x before measuring distance.
-      const gap = Math.min(Infinity, ...placed.map((p) => Math.hypot((p.x - x) * 1.7, p.y - y)));
+      // Stage is ~1.7× wider than tall, so scale x before measuring; the gap is relative to both tiles' sizes.
+      const gap = Math.min(Infinity, ...placed.map((p) => Math.hypot((p.x - x) * 1.7, p.y - y) / (p.s + sizeAt(x))));
       if (gap > bestGap) {
         best = { x, y };
         bestGap = gap;
       }
-      if (gap >= 15) break;
+      if (gap >= 9.5) break;
     }
-    placed.push(best);
+    placed.push({ ...best, s: sizeAt(best.x) });
     const behind = Math.abs(best.x - 50) < 12;
     const depth = featured ? 1 : behind ? 0.5 : 0.5 + next() * 0.4;
     return {

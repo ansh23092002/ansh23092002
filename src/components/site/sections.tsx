@@ -247,7 +247,7 @@ function MilestoneCard({ m, stage = "past", compact = false }: { m: Milestone; s
       <div
         className={cn(
           "relative overflow-hidden border-b border-white/10 bg-[radial-gradient(120%_90%_at_30%_100%,rgba(201,162,39,0.35),transparent_60%)]",
-          compact ? "h-24" : "h-32 sm:h-36",
+          compact ? "h-32 lg:h-36" : "h-32 sm:h-36",
         )}
       >
         {m.image ? (
@@ -308,47 +308,37 @@ function MilestoneCard({ m, stage = "past", compact = false }: { m: Milestone; s
 }
 
 /** Experience clock: the long hand aims at the current pin. */
-function Clock({ progress, aim }: { progress: MotionValue<number>; aim: MotionValue<number> }) {
-  const hour = useTransform(progress, [0, 1], [-90, 150]);
+/** Experience dial: only its lower arc shows on screen; the hands are drawn from a pivot (see Experience). */
+function Clock() {
   return (
-    <div className="relative h-[30rem] w-[30rem] lg:h-[35rem] lg:w-[35rem]" aria-hidden>
-      <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full">
-        <circle cx="200" cy="200" r="196" fill="none" stroke="var(--accent)" strokeOpacity="0.15" />
+    <div className="relative h-full w-full" aria-hidden>
+      <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full overflow-visible">
+        <circle cx="200" cy="200" r="198" fill="none" stroke="var(--accent)" strokeOpacity="0.15" />
         <circle
           cx="200"
           cy="200"
-          r="176"
+          r="184"
           fill="none"
           stroke="var(--accent)"
-          strokeOpacity="0.7"
-          strokeWidth="3"
-          className="drop-shadow-[0_0_8px_var(--accent)]"
+          strokeOpacity="0.85"
+          strokeWidth="3.5"
+          className="drop-shadow-[0_0_10px_var(--accent)]"
         />
-        {Array.from({ length: 120 }, (_, i) => (
+        <circle cx="200" cy="200" r="164" fill="none" stroke="var(--accent)" strokeOpacity="0.5" strokeWidth="1" />
+        {Array.from({ length: 180 }, (_, i) => (
           <line
             key={i}
             x1="200"
-            y1={i % 10 === 0 ? 44 : 36}
+            y1={i % 10 === 0 ? 38 : i % 5 === 0 ? 33 : 30}
             x2="200"
-            y2="28"
+            y2="20"
             stroke="var(--accent)"
-            strokeWidth={i % 10 === 0 ? 3 : 1.5}
-            strokeOpacity={i % 10 === 0 ? 0.9 : 0.35}
-            transform={`rotate(${i * 3} 200 200)`}
+            strokeWidth={i % 10 === 0 ? 2 : 1}
+            strokeOpacity={i % 10 === 0 ? 0.9 : 0.45}
+            transform={`rotate(${i * 2} 200 200)`}
           />
         ))}
       </svg>
-
-
-      <motion.span
-        style={{ rotate: hour }}
-        className="absolute top-1/2 left-1/2 h-[4px] w-[26%] origin-left -translate-y-1/2 rounded-full bg-white/60"
-      />
-      <motion.span
-        style={{ rotate: aim }}
-        className="absolute top-1/2 left-1/2 h-[3px] w-[42%] origin-left -translate-y-1/2 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.6)]"
-      />
-      <span className="absolute top-1/2 left-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_24px_var(--accent)]" />
     </div>
   );
 }
@@ -376,10 +366,12 @@ export function Experience() {
   const fromY = useMotionValue(0);
   const toX = useMotionValue(0);
   const toY = useMotionValue(0);
-  const aim = useMotionValue(-90);
+  // Second hand: from the pivot, sweeping down and to the right as you scroll.
+  const handX = useMotionValue(0);
+  const handY = useMotionValue(0);
   // Pin and clock centres relative to the stage box don't change while scrolling, so they are
   // measured once (and again on resize) — the scroll handler only interpolates.
-  const layout = useRef<{ clock: { x: number; y: number }; pins: { x: number; y: number }[] } | null>(null);
+  const layout = useRef<{ clock: { x: number; y: number }; radius: number; pins: { x: number; y: number }[] } | null>(null);
   const measure = useCallback(() => {
     const box = boxRef.current?.getBoundingClientRect();
     const clock = clockRef.current?.getBoundingClientRect();
@@ -388,7 +380,11 @@ export function Experience() {
       const r = el!.getBoundingClientRect();
       return { x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top };
     });
-    layout.current = { clock: { x: clock.left + clock.width / 2 - box.left, y: clock.top + clock.height / 2 - box.top }, pins };
+    // The dial's centre sits above the screen, so the hands pivot from a point just inside its
+    // visible arc, near the top edge — like the reference.
+    const radius = clock.width / 2;
+    const cx = clock.left + radius - box.left;
+    layout.current = { clock: { x: cx + radius * 0.12, y: Math.max(clock.top + radius - box.top, 44) }, radius, pins };
   }, [n]);
   const point = useCallback(
     (p: number) => {
@@ -407,9 +403,11 @@ export function Experience() {
       fromY.set(l.clock.y);
       toX.set(tx);
       toY.set(ty);
-      aim.set((Math.atan2(ty - l.clock.y, tx - l.clock.x) * 180) / Math.PI);
+      const angle = ((62 - p * 22) * Math.PI) / 180;
+      handX.set(l.clock.x + Math.cos(angle) * l.radius * 0.85);
+      handY.set(l.clock.y + Math.sin(angle) * l.radius * 0.85);
     },
-    [n, measure, fromX, fromY, toX, toY, aim],
+    [n, measure, fromX, fromY, toX, toY, handX, handY],
   );
   useMotionValueEvent(progress, "change", point);
   useEffect(() => {
@@ -432,15 +430,30 @@ export function Experience() {
       {/* Desktop: pinned stage */}
       <div ref={stageRef} className="relative hidden md:block" style={{ height: `${n * 75}svh` }}>
         <div className="sticky top-0 flex h-dvh flex-col justify-center overflow-hidden">
-          <div ref={boxRef} className="relative mx-auto w-full max-w-7xl px-8">
+          <div ref={boxRef} className="relative flex h-full w-full flex-col justify-center px-8 pt-64 pb-6 lg:px-14">
+            {/* Heading, top left */}
+            <div className="absolute top-14 left-8 z-20 max-w-xs lg:left-14">
+              <span aria-hidden className="block h-0.5 w-20 bg-accent shadow-[0_0_10px_var(--accent)]" />
+              <p className="mt-5 text-lg text-white/70">My</p>
+              <h2 className="text-5xl font-semibold leading-none tracking-tight text-white lg:text-6xl">Experience</h2>
+              <p className="mt-5 text-base leading-relaxed text-white/60">A journey of learning, building and creating impact.</p>
+            </div>
 
             {/* Big dial, top right and partly off-screen — sits behind the timeline */}
-            <div ref={clockRef} className="pointer-events-none absolute -top-40 right-0 lg:-top-52 lg:right-6">
-              <Clock progress={progress} aim={aim} />
+            <div
+              ref={clockRef}
+              className="pointer-events-none absolute right-[4vw]"
+              style={{ width: "min(44vw, 820px)", height: "min(44vw, 820px)", top: "calc(40% - min(44vw, 820px))" }}
+            >
+              <Clock />
             </div>
 
             {/* Arc, pins and cards */}
-            <div className="relative z-10 mt-56 lg:mt-64">
+            <div className="relative z-10">
+              <span
+                aria-hidden
+                className="pointer-events-none absolute -bottom-24 left-1/2 -z-10 h-64 w-[110%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(201,162,39,0.22),transparent)]"
+              />
               <svg
                 viewBox={`0 0 1000 ${ARC_H}`}
                 preserveAspectRatio="none"
@@ -448,7 +461,7 @@ export function Experience() {
                 style={{ height: ARC_H }}
                 aria-hidden
               >
-                <path d={arcD()} fill="none" stroke="var(--accent)" strokeOpacity="0.2" strokeWidth="3" vectorEffect="non-scaling-stroke" />
+                <path d={arcD()} fill="none" stroke="var(--accent)" strokeOpacity="0.3" strokeWidth="4" vectorEffect="non-scaling-stroke" />
                 <path
                   d={arcD(7)}
                   fill="none"
@@ -461,18 +474,20 @@ export function Experience() {
               </svg>
               <motion.div aria-hidden className="absolute inset-x-0 top-0" style={{ height: ARC_H, clipPath: fillClip }}>
                 <svg viewBox={`0 0 1000 ${ARC_H}`} preserveAspectRatio="none" className="h-full w-full overflow-visible">
+                  <path d={arcD()} fill="none" stroke="var(--accent)" strokeOpacity="0.25" strokeWidth="16" vectorEffect="non-scaling-stroke" />
                   <path
                     d={arcD()}
                     fill="none"
-                    stroke="var(--accent)"
-                    strokeWidth="3"
+                    stroke="#f0c75e"
+                    strokeWidth="4"
                     vectorEffect="non-scaling-stroke"
-                    className="drop-shadow-[0_0_8px_var(--accent)]"
+                    className="drop-shadow-[0_0_10px_var(--accent)]"
                   />
+                  <path d={arcD()} fill="none" stroke="#fff6d8" strokeOpacity="0.8" strokeWidth="1.2" vectorEffect="non-scaling-stroke" />
                 </svg>
               </motion.div>
 
-              <ol className="relative grid gap-4 lg:gap-5" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
+              <ol className="relative grid gap-5 px-3 lg:gap-8" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
                 {MILESTONES.map((m, i) => (
                   <li key={m.year + m.title} className="flex flex-col items-center" style={{ paddingTop: arcY(ts[i]) - 14 }}>
                     <span
@@ -481,10 +496,23 @@ export function Experience() {
                       }}
                       className="relative z-10"
                     >
+                      <span
+                        className={cn(
+                          "pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 whitespace-nowrap font-display text-4xl leading-none transition-[color,opacity] duration-500 lg:text-5xl",
+                          stageOf(i) === "active"
+                            ? "text-white [text-shadow:0_0_18px_var(--accent),0_0_40px_rgba(201,162,39,0.6)]"
+                            : stageOf(i) === "past"
+                              ? "text-accent-light [text-shadow:0_0_16px_rgba(201,162,39,0.55)]"
+                              : "text-accent-light/40",
+                        )}
+                      >
+                        {m.year}
+                      </span>
                       <Pin m={m} stage={stageOf(i)} />
                     </span>
                     <span className="h-5 w-px bg-gradient-to-b from-accent to-transparent" />
-                    <div className="w-full" style={{ transform: `rotate(${arcTilt(ts[i])}deg)` }}>
+                    {/* Same height for every card so their bottoms follow the arc evenly */}
+                    <div className="h-[min(24rem,46vh)] w-full" style={{ transform: `rotate(${arcTilt(ts[i])}deg)` }}>
                       <MilestoneCard m={m} stage={stageOf(i)} compact />
                     </div>
                   </li>
@@ -512,6 +540,8 @@ export function Experience() {
                 strokeLinecap="round"
                 className="drop-shadow-[0_0_10px_var(--accent)]"
               />
+              <motion.line x1={fromX} y1={fromY} x2={handX} y2={handY} stroke="white" strokeOpacity="0.85" strokeWidth="2.5" strokeLinecap="round" className="drop-shadow-[0_0_8px_var(--accent)]" />
+              <motion.circle cx={fromX} cy={fromY} r="11" fill="white" className="drop-shadow-[0_0_16px_var(--accent)]" />
               <motion.circle cx={toX} cy={toY} r="46" fill="url(#exp-spot)" style={{ mixBlendMode: "screen" }} />
               <motion.circle
                 cx={toX}
