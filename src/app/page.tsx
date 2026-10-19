@@ -9,15 +9,16 @@ import { About, Contact, Experience, Footer, Skills } from "@/components/site/se
 const PHOTO_FILES = ["me.png", "me.jpg", "me.jpeg", "me.webp"];
 
 export default function Home() {
-  const photo = PHOTO_FILES.find((f) => fs.existsSync(path.join(process.cwd(), "public", f)));
+  const found = PHOTO_FILES.find((f) => fs.existsSync(path.join(process.cwd(), "public", f)));
+  const photo = found ? `/${found}` : undefined;
 
   return (
     <>
       <Nav />
       <main>
-        <Hero photo={photo ? `/${photo}` : undefined} />
+        <Hero photo={photo} />
         <About />
-        <Experience />
+        <Experience photo={photo} />
         <Work />
         <Skills />
         <Contact />

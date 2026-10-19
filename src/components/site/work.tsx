@@ -1,156 +1,130 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
+import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
 import { projects } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
-import { EASE, SectionHeading, Tilt } from "./motion";
-import { ProjectStack, slug } from "./skills-lab";
+import { SectionHeading } from "./motion";
+import { slug } from "./skills-lab";
 
 type Project = (typeof projects)[number];
 
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const [open, setOpen] = useState(false);
-  const featured = project.featured;
-
+/** Screenshot inside a minimal browser frame. */
+function BrowserShot({ project }: { project: Project }) {
   return (
-    <Tilt max={3} className="h-full">
-      <article
-        id={`project-${slug(project.title)}`}
-        className="group relative isolate flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-ink text-white"
-      >
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#1f2628] shadow-[0_30px_60px_-30px_rgba(0,0,0,0.6)]">
+      <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
+        <span className="flex gap-1.5" aria-hidden>
+          <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
+          <span className="h-2.5 w-2.5 rounded-full bg-accent" />
+        </span>
+        <span className="flex-1 truncate rounded-full bg-white/5 px-3 py-1 text-center font-mono text-[11px] text-white/50">
+          {project.domain}
+        </span>
+      </div>
+      <div className="relative min-h-[200px] flex-1 overflow-hidden">
         {project.image && (
           <Image
             src={project.image}
             alt={`${project.title} — screenshot of the live site`}
             fill
-            sizes="(min-width: 1280px) 1280px, 100vw"
+            sizes="(min-width: 768px) 640px, 100vw"
             style={"imageFocus" in project ? { objectPosition: project.imageFocus } : undefined}
-            className="-z-20 object-cover object-top transition-transform duration-[1.4s] ease-out-expo group-hover:scale-105"
+            className="object-cover object-top transition-transform duration-[1.4s] ease-out-expo group-hover:scale-[1.04]"
           />
         )}
-        <div className="absolute inset-0 -z-10 bg-ink/80 transition-colors duration-700 group-hover:bg-ink/65" />
-
-        <div className="p-6 sm:p-8">
-          <div className="flex flex-wrap items-center gap-2">
-            <span
-              className={cn(
-                "rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em]",
-                featured ? "bg-accent text-ink" : "bg-white/10 text-white",
-              )}
-            >
-              {featured ? "★ Featured · " : ""}
-              {project.category}
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-white/50">
-              {String(index + 1).padStart(2, "0")} · {project.year} · {project.role}
-            </span>
-          </div>
-          <h3 className="mt-5 font-display text-[clamp(2.75rem,7vw,6.5rem)] uppercase leading-[0.88]">{project.title}</h3>
-          <p className="mt-3 max-w-xl text-sm text-surface-2/80 sm:text-lg">{project.description}</p>
-          <ul className="mt-5 hidden max-w-xl flex-col gap-1.5 text-sm text-surface-2/80 sm:flex">
-            {project.metrics.map((m) => (
-              <li key={m} className="flex gap-2.5">
-                <span className="text-accent">●</span>
-                {m}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="p-6 pt-0 sm:p-8 sm:pt-0">
-          <AnimatePresence initial={false}>
-            {open && (
-              <motion.div
-                key="stack"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.5, ease: EASE }}
-                className="overflow-hidden"
-              >
-                <div className="mb-4 rounded-2xl border border-white/10 bg-ink/80 p-4 backdrop-blur-sm">
-                  <div className="mb-3 font-mono text-[11px] text-white/50">$ stack --project &quot;{project.title}&quot;</div>
-                  <ProjectStack tech={project.tech} />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <a
-              href={project.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink transition-colors hover:bg-white"
-            >
-              Visit site <span aria-hidden>↗</span>
-            </a>
-            <button
-              type="button"
-              onClick={() => setOpen((o) => !o)}
-              aria-expanded={open}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] transition-colors",
-                open ? "border-white bg-white text-ink" : "border-white/30 text-white hover:border-white",
-              )}
-            >
-              {open ? "Hide stack" : "Stack"}
-              <span className="font-mono">[{project.tech.length}]</span>
-            </button>
-            <span className="ml-auto hidden font-mono text-[11px] text-white/40 sm:block">{project.domain}</span>
-          </div>
-        </div>
-      </article>
-    </Tilt>
+      </div>
+    </div>
   );
 }
 
 /**
- * One project in the zoom stage. It rises from depth as it approaches its slot,
- * holds full-size, then flies past the camera and fades as the next one arrives.
+ * One project card. On md+ each card sticks a little lower than the last, so they pile up
+ * like a deck; earlier cards shrink back as later ones slide over them.
  */
-function ZoomLayer({
-  progress,
+function StackCard({
+  project,
   index,
   count,
-  active,
-  children,
+  progress,
 }: {
-  progress: MotionValue<number>;
+  project: Project;
   index: number;
   count: number;
-  active: boolean;
-  children: React.ReactNode;
+  progress: MotionValue<number>;
 }) {
-  const step = 1 / (count - 1);
-  const center = index * step;
-  // Keyframes outside 0–1 crash the browser's scroll-linked animation, so the first
-  // layer starts already full-size and the last one never zooms away.
-  const frames = [
-    { at: center - step, scale: 0.55, opacity: 0 },
-    { at: center - step * 0.15, scale: 1, opacity: 1 },
-    { at: center + step * 0.15, scale: 1, opacity: 1 },
-    { at: center + step, scale: 2.4, opacity: 0 },
-  ].filter((f) => f.at >= 0 && f.at <= 1);
-  if (index === 0) frames.unshift({ at: 0, scale: 1, opacity: 1 });
-  if (index === count - 1) frames.push({ at: 1, scale: 1, opacity: 1 });
-  const input = frames.map((f) => f.at);
-  const scale = useTransform(progress, input, frames.map((f) => f.scale));
-  const opacity = useTransform(progress, input, frames.map((f) => f.opacity));
+  const featured = project.featured;
+  const scale = useTransform(progress, [index / count, 1], [1, 1 - (count - index) * 0.03]);
 
   return (
-    <motion.div
-      style={{ scale, opacity, zIndex: count - index }}
-      inert={!active}
-      className={cn(
-        "absolute inset-0 flex items-center justify-center px-4 pt-24 pb-16 will-change-transform sm:px-8 motion-reduce:!transform-none",
-        !active && "pointer-events-none",
-      )}
+    <div
+      className="mb-6 md:sticky md:top-[var(--stack-top)] md:mb-10"
+      style={{ "--stack-top": `${96 + index * 22}px` } as React.CSSProperties}
     >
-      <div className="h-full w-full max-w-7xl">{children}</div>
-    </motion.div>
+      <motion.article
+        id={`project-${slug(project.title)}`}
+        style={{ scale }}
+        className="group grid origin-top overflow-hidden rounded-[28px] border border-white/10 bg-ink text-white md:h-[min(76vh,620px)] md:grid-cols-[1.05fr_1fr] motion-reduce:!transform-none"
+      >
+        <div className="order-2 flex flex-col justify-between gap-8 p-6 sm:p-8 md:order-1 md:p-10">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={cn(
+                  "rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em]",
+                  featured ? "bg-accent text-ink" : "bg-white/10 text-white",
+                )}
+              >
+                {featured ? "★ Featured · " : ""}
+                {project.category}
+              </span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-white/50">
+                {project.year} · {project.role}
+              </span>
+            </div>
+
+            <div className="mt-6 flex items-start gap-4">
+              <span className="font-mono text-sm text-accent">{String(index + 1).padStart(2, "0")}</span>
+              <h3 className="font-display text-[clamp(2.5rem,5vw,4.5rem)] uppercase leading-[0.9]">{project.title}</h3>
+            </div>
+            <p className="mt-4 max-w-lg text-sm leading-relaxed text-white/75 sm:text-base">{project.description}</p>
+
+            <ul className="mt-5 flex max-w-lg flex-col gap-2 text-sm text-white/80">
+              {project.metrics.map((m) => (
+                <li key={m} className="flex gap-3">
+                  <span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rotate-45 bg-accent" />
+                  {m}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-wrap gap-1.5">
+              {project.tech.map((t) => (
+                <span key={t} className="rounded-full border border-white/15 px-2.5 py-1 font-mono text-[10px] text-white/70">
+                  {t}
+                </span>
+              ))}
+            </div>
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-max items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink transition-colors hover:bg-white"
+            >
+              Visit site <span aria-hidden>↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div className="order-1 h-60 p-3 sm:h-80 md:order-2 md:h-auto md:p-5 md:pl-0">
+          <BrowserShot project={project} />
+        </div>
+      </motion.article>
+    </div>
   );
 }
 
@@ -158,14 +132,11 @@ export function Work() {
   const ordered = [...projects].sort((a, b) => Number(b.featured) - Number(a.featured));
   const count = ordered.length;
 
-  const stageRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: stageRef, offset: ["start start", "end end"] });
-  const [active, setActive] = useState(0);
-  useMotionValueEvent(scrollYProgress, "change", (v) => setActive(Math.round(v * (count - 1))));
-  const bar = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const stackRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: stackRef, offset: ["start start", "end end"] });
 
   return (
-    <section id="work" className="bg-surface-2 pt-20 md:pt-32">
+    <section id="work" className="bg-surface-2 pt-20 pb-24 md:pt-32 md:pb-40">
       <div className="mx-auto max-w-7xl px-4 sm:px-8">
         <SectionHeading
           index="03"
@@ -173,26 +144,11 @@ export function Work() {
           title="Shipped to | *production*"
           description="Led by a state-wide government platform — plus payment backends, logistics dashboards and product sites, all live and in use."
         />
-      </div>
 
-      {/* Each project gets one viewport of scroll to zoom through. */}
-      <div ref={stageRef} className="relative" style={{ height: `${count * 100}svh` }}>
-        <div className="sticky top-0 h-dvh overflow-hidden">
+        <div ref={stackRef} className="mt-12 md:mt-20">
           {ordered.map((p, i) => (
-            <ZoomLayer key={p.title} progress={scrollYProgress} index={i} count={count} active={i === active}>
-              <ProjectCard project={p} index={i} />
-            </ZoomLayer>
+            <StackCard key={p.title} project={p} index={i} count={count} progress={scrollYProgress} />
           ))}
-
-          <div className="absolute inset-x-4 bottom-5 z-50 mx-auto flex max-w-7xl items-center gap-4 sm:inset-x-8">
-            <span className="font-mono text-[11px] tabular-nums text-muted">
-              {String(active + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
-            </span>
-            <div className="h-px flex-1 overflow-hidden bg-fg/15">
-              <motion.div style={{ width: bar }} className="h-full bg-accent" />
-            </div>
-            <span className="hidden text-[10px] uppercase tracking-[0.2em] text-muted sm:block">Scroll to zoom</span>
-          </div>
         </div>
       </div>
     </section>

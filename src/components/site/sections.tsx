@@ -12,7 +12,7 @@ import { PeriodicSkills } from "./skills-lab";
 const toneClasses = {
   accent: "bg-accent text-ink",
   ink: "bg-ink text-white",
-  soft: "bg-white text-fg border border-line",
+  soft: "bg-bg text-fg border border-line",
   plain: "bg-surface-2 text-fg",
 } as const;
 
@@ -52,7 +52,7 @@ function ExpandingMosaic() {
             <p className="font-display text-[clamp(2.75rem,8vw,6rem)] uppercase leading-[0.9]">
               Projects I&apos;ve <span className="text-accent">built</span>
             </p>
-            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-surface-2/85 sm:text-base">
+            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
               {projects.map((p) => p.title).join("  ·  ")}
             </p>
           </motion.div>
@@ -132,13 +132,34 @@ export function About() {
 /* Experience — timeline                                                */
 /* ------------------------------------------------------------------ */
 
-export function Experience() {
+/** Highlights numbers like "40%" or "5+" inside an experience bullet. */
+function emphasize(text: string) {
+  return text.split(/(\d+%|\d+\+)/).map((part, i) =>
+    i % 2 === 1 ? (
+      <strong key={i} className="rounded-md bg-accent-soft px-1.5 font-semibold text-accent-strong">
+        {part}
+      </strong>
+    ) : (
+      part
+    ),
+  );
+}
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("");
+
+export function Experience({ photo }: { photo?: string }) {
   const listRef = useRef<HTMLOListElement>(null);
   const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 70%", "end 60%"] });
   const lineScale = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const current = experiences.find((e) => e.current);
 
   return (
-    <section id="experience" className="mx-auto max-w-6xl px-5 py-28 sm:px-8 md:py-40">
+    <section id="experience" className="mx-auto max-w-7xl px-5 py-28 sm:px-8 md:py-40">
       <SectionHeading
         index="02"
         eyebrow="Experience"
@@ -146,59 +167,130 @@ export function Experience() {
         description="Shipping production software in fast-moving teams — from internal tooling to secure platforms for enterprise and public-sector clients."
       />
 
-      <ol ref={listRef} className="relative mt-12 md:mt-20">
-        {/* Timeline track + scroll-linked fill */}
-        <div className="absolute top-2 bottom-2 left-[5px] w-px bg-line md:left-[calc(25%+5px)]" />
-        <motion.div
-          className="absolute top-2 bottom-2 left-[5px] w-px origin-top bg-accent md:left-[calc(25%+5px)]"
-          style={{ scaleY: lineScale }}
-        />
-
-        {experiences.map((exp, i) => (
-          <li key={exp.company} className="relative grid gap-3 pb-12 pl-8 last:pb-0 md:grid-cols-4 md:gap-0 md:pb-16 md:pl-0">
-            <Reveal delay={0.05} className="md:pr-12">
-              <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted">{exp.period}</div>
-              <div className="mt-1 text-[11px] uppercase tracking-[0.2em] text-subtle">{exp.type}</div>
-            </Reveal>
-
-            <motion.span
-              className={cn(
-                "absolute top-1.5 left-0 h-[11px] w-[11px] rounded-full border-2 border-bg md:left-[25%]",
-                exp.current ? "pulse-dot bg-accent" : "bg-ink",
+      <div className="mt-12 grid gap-10 md:mt-20 md:grid-cols-12 md:gap-12">
+        {/* Portrait — pinned while the roles scroll past */}
+        <div className="md:col-span-5">
+          <Reveal className="md:sticky md:top-24">
+            <div className="relative h-[420px] overflow-hidden rounded-[28px] bg-ink text-white sm:h-[520px] md:h-[min(78vh,640px)]">
+              <span
+                aria-hidden
+                className="absolute inset-x-0 top-6 text-center font-display text-[clamp(5rem,12vw,9rem)] uppercase leading-none text-white/[0.06]"
+              >
+                Since 23
+              </span>
+              {photo && (
+                // Ends above the info panel so the face is never covered.
+                <div className="absolute inset-x-0 top-12 bottom-[170px] sm:bottom-[185px]">
+                  <Image
+                    src={photo}
+                    alt="Portrait of Ansh Sharma"
+                    fill
+                    sizes="(min-width: 768px) 520px, 100vw"
+                    className="object-contain object-bottom [mask-image:linear-gradient(to_bottom,black_80%,transparent)]"
+                  />
+                </div>
               )}
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true, margin: "0px 0px -20% 0px" }}
-              transition={{ duration: 0.6, ease: EASE, delay: 0.1 * i }}
-            />
 
-            <Reveal delay={0.1} className="md:col-span-3 md:pl-12">
-              <h3 className="text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
-                {exp.role}
-                <span className="mt-1 block text-accent-strong sm:mt-0 sm:inline">
-                  <span className="hidden sm:inline"> · </span>
-                  {exp.company}
-                </span>
-              </h3>
-              <ul className="mt-6 flex flex-col gap-3 text-[15px] leading-relaxed text-muted">
-                {exp.highlights.map((h) => (
-                  <li key={h} className="flex gap-3">
-                    <span className="mt-[0.7em] h-px w-3 shrink-0 bg-subtle" />
-                    <span>{h}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-6 flex flex-wrap gap-2">
-                {exp.tags.map((t) => (
-                  <span key={t} className="rounded-full bg-surface-2 px-3 py-1 font-mono text-[11px] text-muted">
-                    {t}
-                  </span>
-                ))}
+              <div className="absolute inset-x-4 bottom-4 flex flex-col gap-3 rounded-2xl border border-white/10 bg-ink/70 p-4 backdrop-blur-md sm:inset-x-5 sm:bottom-5 sm:p-5">
+                {current && (
+                  <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">
+                    <span className="pulse-dot relative h-1.5 w-1.5 rounded-full bg-accent" />
+                    Now · {current.company}
+                  </div>
+                )}
+                <div className="font-display text-3xl uppercase leading-none sm:text-4xl">{current?.role ?? "Developer"}</div>
+                <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-3 text-center">
+                  {[
+                    ["2+", "Years"],
+                    [String(experiences.length), "Companies"],
+                    ["7", "Shipped"],
+                  ].map(([v, k]) => (
+                    <div key={k} className="flex flex-col">
+                      <span className="font-display text-2xl text-white">{v}</span>
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-white/50">{k}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </Reveal>
-          </li>
-        ))}
-      </ol>
+            </div>
+          </Reveal>
+        </div>
+
+        {/* Roles */}
+        <ol ref={listRef} className="relative flex flex-col gap-5 pl-6 md:col-span-7 md:pl-8">
+          <div className="absolute top-3 bottom-3 left-0 w-px bg-line" />
+          <motion.div className="absolute top-3 bottom-3 left-0 w-px origin-top bg-accent" style={{ scaleY: lineScale }} />
+
+          {experiences.map((exp, i) => (
+            <li key={exp.company} className="relative">
+              <motion.span
+                className={cn(
+                  "absolute top-9 -left-6 h-[11px] w-[11px] -translate-x-1/2 rounded-full border-2 border-bg md:-left-8",
+                  exp.current ? "pulse-dot bg-accent" : "bg-ink",
+                )}
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true, margin: "0px 0px -20% 0px" }}
+                transition={{ duration: 0.6, ease: EASE, delay: 0.1 * i }}
+              />
+
+              <Reveal delay={0.05}>
+                <article className="group relative overflow-hidden rounded-3xl border border-line bg-surface p-6 transition-[border-color,box-shadow,transform] duration-500 ease-out-expo hover:-translate-y-1 hover:border-accent hover:shadow-[0_24px_60px_-30px_rgba(45,52,54,0.35)] sm:p-8">
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -top-3 right-4 font-display text-[6rem] leading-none text-fg/[0.04] transition-colors duration-500 group-hover:text-accent/15 sm:text-[7.5rem]"
+                  >
+                    0{i + 1}
+                  </span>
+
+                  <div className="relative flex items-center gap-4">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ink font-display text-xl text-accent">
+                      {initials(exp.company)}
+                    </span>
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted">{exp.period}</span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-full border border-line-strong px-2.5 py-0.5 text-[10px] uppercase tracking-[0.18em] text-subtle">
+                          {exp.type}
+                        </span>
+                        {exp.current && (
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink">
+                            <span className="h-1.5 w-1.5 rounded-full bg-ink" />
+                            Now
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <h3 className="relative mt-6 text-2xl font-semibold tracking-tight text-fg sm:text-[1.75rem]">{exp.role}</h3>
+                  <p className="mt-1 text-base font-medium text-accent-strong">{exp.company}</p>
+
+                  <ul className="mt-5 flex flex-col gap-3 text-[15px] leading-relaxed text-muted">
+                    {exp.highlights.map((h) => (
+                      <li key={h} className="flex gap-3">
+                        <span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rotate-45 bg-accent" />
+                        <span>{emphasize(h)}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-6 flex flex-wrap gap-2 border-t border-line pt-5">
+                    {exp.tags.map((t) => (
+                      <span
+                        key={t}
+                        className="rounded-full border border-line bg-bg px-3 py-1 font-mono text-[11px] text-muted transition-colors group-hover:border-line-strong"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </article>
+              </Reveal>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
   );
 }
@@ -306,7 +398,7 @@ export function Contact() {
             </span>
           </h2>
 
-          <p className="mt-6 flex max-w-xl flex-wrap gap-x-[0.28em] text-base leading-relaxed text-surface-2/75 sm:text-lg md:mt-8">
+          <p className="mt-6 flex max-w-xl flex-wrap gap-x-[0.28em] text-base leading-relaxed text-white/75 sm:text-lg md:mt-8">
             <span className="sr-only">{contactMessage}</span>
             {contactMessage.split(" ").map((word, i, words) => (
               <ContactWord key={i} progress={scrollYProgress} start={0.24 + i / words.length * 0.5} end={0.24 + (i + 1) / words.length * 0.5}>{word}</ContactWord>

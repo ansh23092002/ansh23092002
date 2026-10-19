@@ -12,12 +12,38 @@ const fade = (delay: number) => ({
   transition: { duration: 0.9, ease: EASE, delay },
 });
 
+// Torn bottom edge: irregular teeth from a fixed pseudo-random sequence, so server and client draw the same shape.
+const rand = (i: number) => {
+  const x = Math.sin(i * 12.9898 + 78.233) * 43758.5453;
+  return x - Math.floor(x);
+};
+const TOOTH_COUNT = 34;
+const TEETH = Array.from({ length: TOOTH_COUNT }, (_, i) => {
+  const edge = i === 0 || i === TOOTH_COUNT - 1;
+  return {
+    x: ((i + (edge ? 0 : (rand(i + 50) - 0.5) * 0.7)) / (TOOTH_COUNT - 1)) * 100,
+    depth: i % 2 === 0 ? 0.1 + 0.3 * rand(i) : 0.5 + 0.5 * rand(i),
+  };
+});
+
+/** Clip-path for the torn edge: straight at rest, tearing in and rising as the hero scrolls away. */
+const tornEdge = (progress: number) => {
+  const amp = 90 * progress;
+  const lift = 160 * progress;
+  const bottom = [...TEETH]
+    .reverse()
+    .map((t) => `${t.x.toFixed(2)}% calc(100% - ${(t.depth * amp + lift).toFixed(1)}px)`)
+    .join(", ");
+  return `polygon(0 0, 100% 0, ${bottom})`;
+};
+
 export function Hero({ photo }: { photo?: string }) {
   const lenis = useLenis();
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.92]);
-  const radius = useTransform(scrollYProgress, [0, 1], [28, 56]);
+  const radius = useTransform(scrollYProgress, [0, 1], [0, 56]);
+  const clipPath = useTransform(scrollYProgress, tornEdge);
   const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "-35%"]);
   const photoY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
 
@@ -27,9 +53,9 @@ export function Hero({ photo }: { photo?: string }) {
   };
 
   return (
-    <section ref={ref} id="top" className="h-dvh min-h-[620px] p-2 sm:p-3">
+    <section ref={ref} id="top" className="h-dvh min-h-[620px]">
       <motion.div
-        style={{ scale, borderRadius: radius }}
+        style={{ scale, borderRadius: radius, clipPath }}
         className="relative flex h-full origin-top flex-col overflow-hidden bg-ink text-white"
       >
         {/* Name across the top — sits behind the photo */}
@@ -61,7 +87,7 @@ export function Hero({ photo }: { photo?: string }) {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.4, ease: EASE, delay: 0.4 }}
-            className="pointer-events-none absolute bottom-0 right-0 z-10 h-[80%] w-full max-w-3xl sm:h-[88%] sm:w-[62%]"
+            className="pointer-events-none absolute bottom-[34%] right-0 z-10 h-[37%] w-full sm:bottom-0 max-w-3xl sm:h-[88%] sm:w-[62%]"
             aria-hidden
           >
             <Image
@@ -75,25 +101,28 @@ export function Hero({ photo }: { photo?: string }) {
           </motion.div>
         )}
 
-        {/* Bottom row */}
-        <div className="relative z-20 mt-auto flex flex-col gap-6 px-5 pb-6 sm:flex-row sm:items-end sm:justify-between sm:px-10 sm:pb-10">
+        {/* Intro — stacked on the left, clear of the portrait on the right */}
+        <div className="relative z-20 mt-auto flex flex-col gap-5 px-5 pb-6 sm:max-w-[44%] sm:gap-6 sm:px-10 sm:pb-10">
           <motion.p
             {...fade(1)}
-            className="max-w-sm text-xl font-semibold uppercase leading-tight tracking-tight sm:text-3xl"
+            className="text-xl font-semibold uppercase leading-tight tracking-tight sm:text-3xl lg:text-4xl"
           >
             Web platforms for <span className="text-accent">government</span> & enterprise
           </motion.p>
 
-          <motion.div {...fade(1.1)} className="flex flex-wrap items-center gap-x-8 gap-y-3">
+          <motion.p {...fade(1.05)} className="max-w-md text-sm leading-relaxed text-white/70 sm:text-base">
+            Full stack developer building fast, secure products — from real-time WebRTC pipelines to scalable
+            Next.js architecture.
+          </motion.p>
+
+          <motion.div {...fade(1.1)} className="flex flex-wrap items-center gap-x-8 gap-y-3 pt-1">
             <a
               href="#work"
               onClick={goTo("work")}
-              className="group inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-white sm:text-sm"
+              className="group inline-flex items-center gap-3 rounded-full bg-accent px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.2em] text-ink transition-colors hover:bg-white sm:text-sm"
             >
               See my work
-              <span className="text-accent transition-transform duration-500 ease-out-expo group-hover:translate-x-1.5">
-                ⟶
-              </span>
+              <span className="transition-transform duration-500 ease-out-expo group-hover:translate-x-1.5">⟶</span>
             </a>
             <a
               href="#contact"
