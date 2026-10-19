@@ -18,7 +18,7 @@ export default function Home() {
       <main>
         <Hero photo={photo} />
         <About />
-        <Experience photo={photo} />
+        <Experience />
         <Work />
         <Skills />
         <Contact />

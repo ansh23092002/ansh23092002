@@ -1,13 +1,22 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
-import { education, experiences, marqueeSkills, profile, projects, stats } from "@/data/portfolio";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from "motion/react";
+import { education, experiences, profile, projects, stats } from "@/data/portfolio";
 import { cn } from "@/lib/utils";
 import { AnimatedTitle, CountUp, EASE, Eyebrow, Magnetic, Reveal, ScrollText, SectionHeading, Tilt } from "./motion";
 import { scrollToId, useLenis } from "./providers";
-import { PeriodicSkills } from "./skills-lab";
+import { SkillUniverse } from "./skill-universe";
 
 const toneClasses = {
   accent: "bg-accent text-ink",
@@ -132,19 +141,6 @@ export function About() {
 /* Experience — timeline                                                */
 /* ------------------------------------------------------------------ */
 
-/** Highlights numbers like "40%" or "5+" inside an experience bullet. */
-function emphasize(text: string) {
-  return text.split(/(\d+%|\d+\+)/).map((part, i) =>
-    i % 2 === 1 ? (
-      <strong key={i} className="rounded-md bg-accent-soft px-1.5 font-semibold text-accent-strong">
-        {part}
-      </strong>
-    ) : (
-      part
-    ),
-  );
-}
-
 const initials = (name: string) =>
   name
     .split(/\s+/)
@@ -152,145 +148,401 @@ const initials = (name: string) =>
     .map((w) => w[0])
     .join("");
 
-export function Experience({ photo }: { photo?: string }) {
-  const listRef = useRef<HTMLOListElement>(null);
-  const { scrollYProgress } = useScroll({ target: listRef, offset: ["start 70%", "end 60%"] });
-  const lineScale = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-  const current = experiences.find((e) => e.current);
+type Milestone = {
+  year: string;
+  title: string;
+  org?: string;
+  text: string;
+  tags?: readonly string[];
+  badge: string;
+  /** Header image: a project from that year, or a portrait for what's next. */
+  image?: string;
+  current?: boolean;
+  next?: boolean;
+};
+
+const chronological = [...experiences].reverse();
+
+// Card images for specific roles (company → image in /public).
+const ROLE_IMAGES: Record<string, string> = {
+  "Xtention Crew Technologies": "/projects/leadcrm.webp", // LeadCRM — leadcrm-six.vercel.app
+};
+
+// Oldest first: each role, then what's next.
+const MILESTONES: Milestone[] = [
+  ...chronological.map((e) => {
+    const year = e.period.match(/\d{4}/)?.[0] ?? "";
+    return {
+      year,
+      title: e.role,
+      org: e.company,
+      text: e.summary,
+      tags: e.tags,
+      badge: initials(e.company),
+      // Screenshot of work from that role, else a project shipped the year it started.
+      image: ROLE_IMAGES[e.company] ?? projects.find((p) => p.image && p.year === year)?.image,
+      current: e.current,
+    };
+  }),
+  {
+    year: "Next",
+    title: "Next chapter",
+    text: "Building bigger products and creating greater impact.",
+    badge: "→",
+    image: "/me-back.webp",
+    next: true,
+  },
+];
+
+// The arc the pins sit on: a quadratic curve across a 1000 × ARC_H box (x stretches with the row).
+const ARC_H = 170;
+const ARC = { y0: 34, c: 190, y1: 70 };
+const arcY = (t: number) => (1 - t) ** 2 * ARC.y0 + 2 * (1 - t) * t * ARC.c + t ** 2 * ARC.y1;
+// Tilt each card a little along the curve's slope.
+const arcTilt = (t: number) => {
+  const dy = 2 * (1 - t) * (ARC.c - ARC.y0) + 2 * t * (ARC.y1 - ARC.c);
+  return ((Math.atan2(dy, 1250) * 180) / Math.PI) * 0.45;
+};
+const arcD = (dy = 0) => `M0 ${ARC.y0 + dy} Q500 ${ARC.c + dy} 1000 ${ARC.y1 + dy}`;
+
+type Stage = "past" | "active" | "future";
+
+function Pin({ m, stage = "past" }: { m: Milestone; stage?: Stage }) {
+  return (
+    <span
+      className={cn(
+        "relative flex h-7 w-7 items-center justify-center transition-[opacity,transform] duration-500",
+        stage === "future" && "opacity-40",
+        stage === "active" && "scale-125",
+      )}
+    >
+      {stage === "active" && <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />}
+      <span
+        className={cn(
+          "flex h-6 w-6 rotate-45 items-center justify-center rounded-full rounded-br-none",
+          m.next ? "border-2 border-accent bg-ink" : "bg-accent",
+          stage !== "future" && "shadow-[0_0_18px_var(--accent)]",
+        )}
+      >
+        <span className={cn("h-2 w-2 rounded-full", m.next ? "bg-accent" : "bg-white")} />
+      </span>
+    </span>
+  );
+}
+
+function MilestoneCard({ m, stage = "past", compact = false }: { m: Milestone; stage?: Stage; compact?: boolean }) {
+  return (
+    <article
+      className={cn(
+        "group flex h-full flex-col overflow-hidden rounded-2xl border bg-[linear-gradient(to_bottom,rgba(255,255,255,0.07),rgba(255,255,255,0.02))] backdrop-blur-sm transition-[transform,border-color,box-shadow,opacity,filter] duration-500 ease-out-expo hover:-translate-y-2",
+        stage === "active"
+          ? "border-accent shadow-[0_0_0_1px_var(--accent),0_0_40px_-6px_var(--accent)]"
+          : m.next
+            ? "border-dashed border-white/25"
+            : "border-white/10",
+        stage === "future" && "opacity-40 grayscale",
+      )}
+    >
+      {/* Visual: warm-graded image (or glow + oversized year) behind the badge */}
+      <div
+        className={cn(
+          "relative overflow-hidden border-b border-white/10 bg-[radial-gradient(120%_90%_at_30%_100%,rgba(201,162,39,0.35),transparent_60%)]",
+          compact ? "h-24" : "h-32 sm:h-36",
+        )}
+      >
+        {m.image ? (
+          <>
+            <Image
+              src={m.image}
+              alt=""
+              fill
+              sizes="280px"
+              className="object-cover object-top brightness-[0.7] sepia-[0.45] transition-transform duration-700 ease-out-expo group-hover:scale-105"
+            />
+            <span className="absolute inset-0 bg-[linear-gradient(to_top,rgba(27,34,37,0.92),transparent_65%),radial-gradient(120%_90%_at_30%_100%,rgba(201,162,39,0.3),transparent_60%)]" />
+          </>
+        ) : (
+          <span
+            aria-hidden
+            className="absolute -right-2 -bottom-5 font-display text-[5.5rem] leading-none text-white/[0.06]"
+          >
+            {m.year}
+          </span>
+        )}
+        {!m.image && (
+          <span
+            className={cn(
+              "absolute left-4 flex items-center justify-center rounded-xl font-display",
+              compact ? "bottom-3 h-10 w-10 text-lg" : "bottom-4 h-12 w-12 text-xl",
+              m.current ? "bg-accent text-ink" : "bg-white/10 text-accent",
+            )}
+          >
+            {m.badge}
+          </span>
+        )}
+        {m.current && (
+          <span className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink">
+            <span className="h-1.5 w-1.5 rounded-full bg-ink" />
+            Now
+          </span>
+        )}
+      </div>
+
+      <div className={cn("flex flex-1 flex-col gap-1.5", compact ? "p-4" : "p-4 sm:p-5")}>
+        <span className="font-display text-2xl leading-none text-accent">{m.year}</span>
+        <h3 className="text-base font-semibold leading-snug text-white">{m.title}</h3>
+        {m.org && <p className="text-sm font-medium text-accent-light">{m.org}</p>}
+        <p className="mt-1 text-[13px] leading-relaxed text-white/60">{m.text}</p>
+        {m.tags && (
+          <div className="mt-auto flex flex-wrap gap-1 pt-3">
+            {m.tags.slice(0, compact ? 3 : 4).map((t) => (
+              <span key={t} className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[10px] text-white/50">
+                {t}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/** Experience clock: the long hand aims at the current pin. */
+function Clock({ progress, aim }: { progress: MotionValue<number>; aim: MotionValue<number> }) {
+  const hour = useTransform(progress, [0, 1], [-90, 150]);
+  return (
+    <div className="relative h-[30rem] w-[30rem] lg:h-[35rem] lg:w-[35rem]" aria-hidden>
+      <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full">
+        <circle cx="200" cy="200" r="196" fill="none" stroke="var(--accent)" strokeOpacity="0.15" />
+        <circle
+          cx="200"
+          cy="200"
+          r="176"
+          fill="none"
+          stroke="var(--accent)"
+          strokeOpacity="0.7"
+          strokeWidth="3"
+          className="drop-shadow-[0_0_8px_var(--accent)]"
+        />
+        {Array.from({ length: 120 }, (_, i) => (
+          <line
+            key={i}
+            x1="200"
+            y1={i % 10 === 0 ? 44 : 36}
+            x2="200"
+            y2="28"
+            stroke="var(--accent)"
+            strokeWidth={i % 10 === 0 ? 3 : 1.5}
+            strokeOpacity={i % 10 === 0 ? 0.9 : 0.35}
+            transform={`rotate(${i * 3} 200 200)`}
+          />
+        ))}
+      </svg>
+
+
+      <motion.span
+        style={{ rotate: hour }}
+        className="absolute top-1/2 left-1/2 h-[4px] w-[26%] origin-left -translate-y-1/2 rounded-full bg-white/60"
+      />
+      <motion.span
+        style={{ rotate: aim }}
+        className="absolute top-1/2 left-1/2 h-[3px] w-[42%] origin-left -translate-y-1/2 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.6)]"
+      />
+      <span className="absolute top-1/2 left-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_24px_var(--accent)]" />
+    </div>
+  );
+}
+
+export function Experience() {
+  const n = MILESTONES.length;
+  const ts = MILESTONES.map((_, i) => (i + 0.5) / n);
+
+  // Desktop: the stage stays pinned while scroll walks the timeline from first to last milestone.
+  const stageRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: stageRef, offset: ["start start", "end end"] });
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, restDelta: 0.001 });
+  const [active, setActive] = useState(0);
+  useMotionValueEvent(scrollYProgress, "change", (v) => setActive(Math.min(n - 1, Math.round(v * (n - 1)))));
+
+  // Bright arc fills from the first pin to the active one.
+  const fill = useTransform(progress, [0, 1], [ts[0], ts[n - 1]]);
+  const fillClip = useTransform(fill, (f) => `inset(-20px ${(100 - f * 100).toFixed(2)}% -20px 0)`);
+
+  // Pointer from the clock to the current pin, measured live so it holds at any viewport size.
+  const boxRef = useRef<HTMLDivElement>(null);
+  const clockRef = useRef<HTMLDivElement>(null);
+  const pinRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const fromX = useMotionValue(0);
+  const fromY = useMotionValue(0);
+  const toX = useMotionValue(0);
+  const toY = useMotionValue(0);
+  const aim = useMotionValue(-90);
+  // Pin and clock centres relative to the stage box don't change while scrolling, so they are
+  // measured once (and again on resize) — the scroll handler only interpolates.
+  const layout = useRef<{ clock: { x: number; y: number }; pins: { x: number; y: number }[] } | null>(null);
+  const measure = useCallback(() => {
+    const box = boxRef.current?.getBoundingClientRect();
+    const clock = clockRef.current?.getBoundingClientRect();
+    if (!box || !clock || !box.width) return;
+    const pins = pinRefs.current.slice(0, n).map((el) => {
+      const r = el!.getBoundingClientRect();
+      return { x: r.left + r.width / 2 - box.left, y: r.top + r.height / 2 - box.top };
+    });
+    layout.current = { clock: { x: clock.left + clock.width / 2 - box.left, y: clock.top + clock.height / 2 - box.top }, pins };
+  }, [n]);
+  const point = useCallback(
+    (p: number) => {
+      if (!layout.current) measure();
+      const l = layout.current;
+      if (!l || l.pins.length < n) return;
+      // Glide between neighbouring pins as the scroll moves.
+      const f = Math.min(n - 1, Math.max(0, p * (n - 1)));
+      const i = Math.min(n - 2, Math.floor(f));
+      const k = f - i;
+      const a = l.pins[i];
+      const b = l.pins[i + 1];
+      const tx = a.x + (b.x - a.x) * k;
+      const ty = a.y + (b.y - a.y) * k;
+      fromX.set(l.clock.x);
+      fromY.set(l.clock.y);
+      toX.set(tx);
+      toY.set(ty);
+      aim.set((Math.atan2(ty - l.clock.y, tx - l.clock.x) * 180) / Math.PI);
+    },
+    [n, measure, fromX, fromY, toX, toY, aim],
+  );
+  useMotionValueEvent(progress, "change", point);
+  useEffect(() => {
+    const box = boxRef.current;
+    if (!box) return;
+    const update = () => {
+      measure();
+      point(progress.get());
+    };
+    const ro = new ResizeObserver(update);
+    ro.observe(box);
+    update();
+    return () => ro.disconnect();
+  }, [measure, point, progress]);
+
+  const stageOf = (i: number): Stage => (i < active ? "past" : i === active ? "active" : "future");
 
   return (
-    <section id="experience" className="mx-auto max-w-7xl px-5 py-28 sm:px-8 md:py-40">
-      <SectionHeading
-        index="02"
-        eyebrow="Experience"
-        title="Where I've | *worked*"
-        description="Shipping production software in fast-moving teams — from internal tooling to secure platforms for enterprise and public-sector clients."
-      />
+    <section id="experience" className="relative bg-ink text-white">
+      {/* Desktop: pinned stage */}
+      <div ref={stageRef} className="relative hidden md:block" style={{ height: `${n * 75}svh` }}>
+        <div className="sticky top-0 flex h-dvh flex-col justify-center overflow-hidden">
+          <div ref={boxRef} className="relative mx-auto w-full max-w-7xl px-8">
 
-      <div className="mt-12 grid gap-10 md:mt-20 md:grid-cols-12 md:gap-12">
-        {/* Portrait — pinned while the roles scroll past */}
-        <div className="md:col-span-5">
-          <Reveal className="md:sticky md:top-24">
-            <div className="relative h-[420px] overflow-hidden rounded-[28px] bg-ink text-white sm:h-[520px] md:h-[min(78vh,640px)]">
-              <span
-                aria-hidden
-                className="absolute inset-x-0 top-6 text-center font-display text-[clamp(5rem,12vw,9rem)] uppercase leading-none text-white/[0.06]"
-              >
-                Since 23
-              </span>
-              {photo && (
-                // Ends above the info panel so the face is never covered.
-                <div className="absolute inset-x-0 top-12 bottom-[170px] sm:bottom-[185px]">
-                  <Image
-                    src={photo}
-                    alt="Portrait of Ansh Sharma"
-                    fill
-                    sizes="(min-width: 768px) 520px, 100vw"
-                    className="object-contain object-bottom [mask-image:linear-gradient(to_bottom,black_80%,transparent)]"
-                  />
-                </div>
-              )}
-
-              <div className="absolute inset-x-4 bottom-4 flex flex-col gap-3 rounded-2xl border border-white/10 bg-ink/70 p-4 backdrop-blur-md sm:inset-x-5 sm:bottom-5 sm:p-5">
-                {current && (
-                  <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-accent">
-                    <span className="pulse-dot relative h-1.5 w-1.5 rounded-full bg-accent" />
-                    Now · {current.company}
-                  </div>
-                )}
-                <div className="font-display text-3xl uppercase leading-none sm:text-4xl">{current?.role ?? "Developer"}</div>
-                <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-3 text-center">
-                  {[
-                    ["2+", "Years"],
-                    [String(experiences.length), "Companies"],
-                    ["7", "Shipped"],
-                  ].map(([v, k]) => (
-                    <div key={k} className="flex flex-col">
-                      <span className="font-display text-2xl text-white">{v}</span>
-                      <span className="text-[10px] uppercase tracking-[0.18em] text-white/50">{k}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            {/* Big dial, top right and partly off-screen — sits behind the timeline */}
+            <div ref={clockRef} className="pointer-events-none absolute -top-40 right-0 lg:-top-52 lg:right-6">
+              <Clock progress={progress} aim={aim} />
             </div>
-          </Reveal>
-        </div>
 
-        {/* Roles */}
-        <ol ref={listRef} className="relative flex flex-col gap-5 pl-6 md:col-span-7 md:pl-8">
-          <div className="absolute top-3 bottom-3 left-0 w-px bg-line" />
-          <motion.div className="absolute top-3 bottom-3 left-0 w-px origin-top bg-accent" style={{ scaleY: lineScale }} />
+            {/* Arc, pins and cards */}
+            <div className="relative z-10 mt-56 lg:mt-64">
+              <svg
+                viewBox={`0 0 1000 ${ARC_H}`}
+                preserveAspectRatio="none"
+                className="absolute inset-x-0 top-0 w-full overflow-visible"
+                style={{ height: ARC_H }}
+                aria-hidden
+              >
+                <path d={arcD()} fill="none" stroke="var(--accent)" strokeOpacity="0.2" strokeWidth="3" vectorEffect="non-scaling-stroke" />
+                <path
+                  d={arcD(7)}
+                  fill="none"
+                  stroke="var(--accent)"
+                  strokeOpacity="0.3"
+                  strokeWidth="6"
+                  strokeDasharray="1.5 16"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+              <motion.div aria-hidden className="absolute inset-x-0 top-0" style={{ height: ARC_H, clipPath: fillClip }}>
+                <svg viewBox={`0 0 1000 ${ARC_H}`} preserveAspectRatio="none" className="h-full w-full overflow-visible">
+                  <path
+                    d={arcD()}
+                    fill="none"
+                    stroke="var(--accent)"
+                    strokeWidth="3"
+                    vectorEffect="non-scaling-stroke"
+                    className="drop-shadow-[0_0_8px_var(--accent)]"
+                  />
+                </svg>
+              </motion.div>
 
-          {experiences.map((exp, i) => (
-            <li key={exp.company} className="relative">
-              <motion.span
-                className={cn(
-                  "absolute top-9 -left-6 h-[11px] w-[11px] -translate-x-1/2 rounded-full border-2 border-bg md:-left-8",
-                  exp.current ? "pulse-dot bg-accent" : "bg-ink",
-                )}
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true, margin: "0px 0px -20% 0px" }}
-                transition={{ duration: 0.6, ease: EASE, delay: 0.1 * i }}
-              />
-
-              <Reveal delay={0.05}>
-                <article className="group relative overflow-hidden rounded-3xl border border-line bg-surface p-6 transition-[border-color,box-shadow,transform] duration-500 ease-out-expo hover:-translate-y-1 hover:border-accent hover:shadow-[0_24px_60px_-30px_rgba(45,52,54,0.35)] sm:p-8">
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute -top-3 right-4 font-display text-[6rem] leading-none text-fg/[0.04] transition-colors duration-500 group-hover:text-accent/15 sm:text-[7.5rem]"
-                  >
-                    0{i + 1}
-                  </span>
-
-                  <div className="relative flex items-center gap-4">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ink font-display text-xl text-accent">
-                      {initials(exp.company)}
+              <ol className="relative grid gap-4 lg:gap-5" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
+                {MILESTONES.map((m, i) => (
+                  <li key={m.year + m.title} className="flex flex-col items-center" style={{ paddingTop: arcY(ts[i]) - 14 }}>
+                    <span
+                      ref={(el) => {
+                        pinRefs.current[i] = el;
+                      }}
+                      className="relative z-10"
+                    >
+                      <Pin m={m} stage={stageOf(i)} />
                     </span>
-                    <div className="flex flex-col gap-1.5">
-                      <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted">{exp.period}</span>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-line-strong px-2.5 py-0.5 text-[10px] uppercase tracking-[0.18em] text-subtle">
-                          {exp.type}
-                        </span>
-                        {exp.current && (
-                          <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink">
-                            <span className="h-1.5 w-1.5 rounded-full bg-ink" />
-                            Now
-                          </span>
-                        )}
-                      </div>
+                    <span className="h-5 w-px bg-gradient-to-b from-accent to-transparent" />
+                    <div className="w-full" style={{ transform: `rotate(${arcTilt(ts[i])}deg)` }}>
+                      <MilestoneCard m={m} stage={stageOf(i)} compact />
                     </div>
-                  </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
 
-                  <h3 className="relative mt-6 text-2xl font-semibold tracking-tight text-fg sm:text-[1.75rem]">{exp.role}</h3>
-                  <p className="mt-1 text-base font-medium text-accent-strong">{exp.company}</p>
-
-                  <ul className="mt-5 flex flex-col gap-3 text-[15px] leading-relaxed text-muted">
-                    {exp.highlights.map((h) => (
-                      <li key={h} className="flex gap-3">
-                        <span className="mt-[0.55em] h-1.5 w-1.5 shrink-0 rotate-45 bg-accent" />
-                        <span>{emphasize(h)}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-6 flex flex-wrap gap-2 border-t border-line pt-5">
-                    {exp.tags.map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full border border-line bg-bg px-3 py-1 font-mono text-[11px] text-muted transition-colors group-hover:border-line-strong"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-              </Reveal>
-            </li>
-          ))}
-        </ol>
+            {/* Pointer: clock centre → current pin, with a spotlight where it lands */}
+            <svg aria-hidden className="pointer-events-none absolute inset-0 z-20 h-full w-full overflow-visible">
+              <defs>
+                <radialGradient id="exp-spot">
+                  <stop offset="0%" stopColor="white" stopOpacity="0.95" />
+                  <stop offset="35%" stopColor="var(--accent)" stopOpacity="0.55" />
+                  <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <motion.line x1={fromX} y1={fromY} x2={toX} y2={toY} stroke="var(--accent)" strokeOpacity="0.25" strokeWidth="10" strokeLinecap="round" />
+              <motion.line
+                x1={fromX}
+                y1={fromY}
+                x2={toX}
+                y2={toY}
+                stroke="white"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                className="drop-shadow-[0_0_10px_var(--accent)]"
+              />
+              <motion.circle cx={toX} cy={toY} r="46" fill="url(#exp-spot)" style={{ mixBlendMode: "screen" }} />
+              <motion.circle
+                cx={toX}
+                cy={toY}
+                r="20"
+                fill="none"
+                stroke="var(--accent)"
+                strokeWidth="2"
+                className="animate-pulse drop-shadow-[0_0_8px_var(--accent)]"
+              />
+              <motion.circle cx={toX} cy={toY} r="6" fill="white" className="drop-shadow-[0_0_12px_white]" />
+            </svg>
+          </div>
+        </div>
       </div>
+
+      {/* Mobile: vertical glowing rail */}
+      <ol className="relative mx-auto flex max-w-7xl flex-col gap-8 px-5 pt-24 pb-28 pl-15 md:hidden">
+        <span className="absolute top-14 bottom-28 left-[33px] w-[3px] rounded-full bg-accent shadow-[0_0_12px_var(--accent)]" />
+        {MILESTONES.map((m) => (
+          <li key={m.year + m.title} className="relative">
+            <span className="absolute top-0 -left-10">
+              <Pin m={m} stage={m.next ? "future" : "past"} />
+            </span>
+            <Reveal>
+              <span className="mb-3 block font-display text-3xl leading-none text-accent-light">{m.year}</span>
+              <MilestoneCard m={m} stage={m.current ? "active" : "past"} />
+            </Reveal>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
@@ -300,33 +552,9 @@ export function Experience({ photo }: { photo?: string }) {
 /* ------------------------------------------------------------------ */
 
 export function Skills() {
-  const row = [...marqueeSkills, ...marqueeSkills];
-
   return (
-    <section id="skills" className="py-20 md:py-32">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeading
-          index="04"
-          eyebrow="Capabilities"
-          title="Tools of | the *trade*"
-          description="My stack as a periodic table. Filter by category, or tap any element."
-        />
-      </div>
-
-      <div className="marquee mt-12 overflow-hidden bg-ink py-5 md:mt-16 md:py-6" aria-hidden>
-        <div className="marquee-track flex w-max items-center">
-          {row.map((s, i) => (
-            <span key={i} className="flex items-center whitespace-nowrap font-display text-5xl uppercase text-white md:text-7xl">
-              {s}
-              <span className="mx-8 text-accent md:mx-12">✦</span>
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className="mx-auto mt-12 max-w-7xl px-5 sm:px-8 md:mt-16">
-        <PeriodicSkills />
-      </div>
+    <section id="skills">
+      <SkillUniverse index="04" />
     </section>
   );
 }

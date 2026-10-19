@@ -31,6 +31,7 @@ export const experiences = [
   {
     role: "Full Stack Developer",
     company: "Ailifebot",
+    summary: "End-to-end products, secure APIs, fast dashboards and Loop-in, an in-house video conferencing app.",
     period: "Sep 2025 — Present",
     type: "Full-time",
     current: true,
@@ -45,6 +46,7 @@ export const experiences = [
   {
     role: "Frontend Developer",
     company: "Inext Software Solutions",
+    summary: "Built a shared UI library and Next.js clients for enterprise dashboards.",
     period: "Aug 2024 — Aug 2025",
     type: "Full-time",
     current: false,
@@ -58,6 +60,7 @@ export const experiences = [
   {
     role: "Frontend Developer Intern",
     company: "Xtention Crew Technologies",
+    summary: "Worked on real-world projects, including a real-time chat module in React and Vue.",
     period: "Oct 2023 — Mar 2024",
     type: "Internship",
     current: false,

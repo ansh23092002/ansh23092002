@@ -78,7 +78,7 @@ export const skillIcons: Record<string, IconType> = {
 };
 
 // Official brand colours, used only for the logo in the skill log.
-const brandColors: Record<string, string> = {
+export const brandColors: Record<string, string> = {
   JavaScript: "#F7DF1E",
   TypeScript: "#3178C6",
   SQL: "#4479A1",

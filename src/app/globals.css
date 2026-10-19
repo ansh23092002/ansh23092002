@@ -97,6 +97,28 @@ html.lenis body {
   animation-play-state: paused;
 }
 
+/* Skill universe: each tile wanders on its own path (values come from CSS variables per tile) */
+@keyframes tile-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate3d(var(--dx1), var(--dy1), 0) rotate(var(--dr1));
+  }
+  50% {
+    transform: translate3d(var(--dx2), var(--dy2), 0) rotate(var(--dr2));
+  }
+  75% {
+    transform: translate3d(var(--dx3), var(--dy3), 0) rotate(var(--dr3));
+  }
+}
+
+.tile-drift {
+  animation: tile-drift var(--drift-dur, 16s) ease-in-out var(--drift-delay, 0s) infinite;
+  will-change: transform;
+}
+
 @keyframes pulse-dot {
   0% {
     transform: scale(1);
@@ -119,6 +141,7 @@ html.lenis body {
 
 @media (prefers-reduced-motion: reduce) {
   .marquee-track,
+  .tile-drift,
   .pulse-dot::after {
     animation: none;
   }
