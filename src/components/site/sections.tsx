@@ -12,7 +12,7 @@ import { PeriodicSkills } from "./skills-lab";
 const toneClasses = {
   accent: "bg-accent text-ink",
   ink: "bg-ink text-white",
-  soft: "bg-surface text-fg border border-line",
+  soft: "bg-white text-fg border border-line",
   plain: "bg-surface-2 text-fg",
 } as const;
 
@@ -52,7 +52,7 @@ function ExpandingMosaic() {
             <p className="font-display text-[clamp(2.75rem,8vw,6rem)] uppercase leading-[0.9]">
               Projects I&apos;ve <span className="text-accent">built</span>
             </p>
-            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
+            <p className="mt-5 max-w-2xl text-sm leading-relaxed text-surface-2/85 sm:text-base">
               {projects.map((p) => p.title).join("  ·  ")}
             </p>
           </motion.div>
@@ -306,7 +306,7 @@ export function Contact() {
             </span>
           </h2>
 
-          <p className="mt-6 flex max-w-xl flex-wrap gap-x-[0.28em] text-base leading-relaxed text-white/75 sm:text-lg md:mt-8">
+          <p className="mt-6 flex max-w-xl flex-wrap gap-x-[0.28em] text-base leading-relaxed text-surface-2/75 sm:text-lg md:mt-8">
             <span className="sr-only">{contactMessage}</span>
             {contactMessage.split(" ").map((word, i, words) => (
               <ContactWord key={i} progress={scrollYProgress} start={0.24 + i / words.length * 0.5} end={0.24 + (i + 1) / words.length * 0.5}>{word}</ContactWord>

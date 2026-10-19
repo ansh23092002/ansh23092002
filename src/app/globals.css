@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
-/* Design tokens — dark charcoal surfaces, soft white type and accent gold. */
+/* Design tokens — deep charcoal, soft grey, pure white and accent gold (plus tints). No gradients. */
 :root {
-  --bg: #101213;
-  --surface: #171a1c;
-  --surface-2: #202527;
-  --line: #303638;
-  --line-strong: #4a5357;
-  --fg: #f2f4f4;
-  --muted: #b0b9bd;
-  --subtle: #8e9b9f;
-  --ink: #171c1e;
+  --bg: #ffffff;
+  --surface: #f4f7f8;
+  --surface-2: #dfe6e9;
+  --line: #dfe6e9;
+  --line-strong: #c3cdd1;
+  --fg: #2d3436;
+  --muted: #5f6b6f;
+  --subtle: #8c989c;
+  --ink: #2d3436;
   --accent: #c9a227;
-  --accent-soft: #302a18;
-  --accent-strong: #dec367;
+  --accent-soft: #f7f0dc;
+  --accent-strong: #8a6d12;
   --accent-light: #e6cf85;
 }
 
@@ -39,7 +39,7 @@
 
 html {
   background-color: var(--bg);
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {

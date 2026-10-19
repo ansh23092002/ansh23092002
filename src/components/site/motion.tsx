@@ -15,6 +15,25 @@ import { cn } from "@/lib/utils";
 
 export const EASE = [0.16, 1, 0.3, 1] as const;
 
+/** Big display word whose letters rise in one by one. */
+export function Letters({ text, delay = 0 }: { text: string; delay?: number }) {
+  return (
+    <span className="inline-flex overflow-hidden" aria-hidden>
+      {text.split("").map((ch, i) => (
+        <motion.span
+          key={i}
+          className="inline-block"
+          initial={{ y: "105%" }}
+          animate={{ y: "0%" }}
+          transition={{ duration: 1, ease: EASE, delay: delay + i * 0.04 }}
+        >
+          {ch === " " ? "\u00A0" : ch}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
+
 /** Fades and lifts children into view once they enter the viewport. */
 export function Reveal({
   children,

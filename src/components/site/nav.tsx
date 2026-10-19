@@ -61,27 +61,20 @@ export function Nav() {
   return (
     <>
       <motion.header
-        className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5"
+        className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-1/2 z-50 w-max max-w-[calc(100%-1.5rem)] -translate-x-1/2"
         initial={false}
-        animate={{ y: hidden ? "-130%" : "0%" }}
+        animate={{ y: hidden ? "calc(100% + 3rem)" : "0%" }}
         transition={{ duration: 0.55, ease: EASE }}
       >
-        <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-white/10 bg-ink text-white shadow-[0_18px_40px_-18px_rgba(45,52,54,0.6)]">
-          <div className="flex h-14 items-center justify-between px-3 sm:px-4">
-            <div className="flex items-center gap-3">
-              <Link href="/" onClick={(e) => go(e, "top")} aria-label="Ansh Sharma — home" className="group">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-xs font-semibold text-ink transition-transform duration-500 ease-out-expo group-hover:rotate-[-8deg]">
-                  AS
-                </span>
-              </Link>
-              <a
-                href={profile.resume}
-                download={profile.resumeFileName}
-                className="hidden rounded-full bg-white px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-ink transition-colors hover:bg-accent sm:inline-flex"
-              >
-                Résumé
-              </a>
-            </div>
+        <div className="overflow-hidden rounded-2xl border border-white/10 bg-ink text-white shadow-[0_18px_40px_-18px_rgba(45,52,54,0.6)]">
+          <div className="flex h-14 items-center justify-center gap-3 px-3 sm:px-4">
+            <a
+              href={profile.resume}
+              download={profile.resumeFileName}
+              className="inline-flex shrink-0 rounded-full bg-white px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-ink transition-colors hover:bg-accent"
+            >
+              Résumé
+            </a>
 
             <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
               {navLinks.map((link) => (
@@ -131,7 +124,7 @@ export function Nav() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="fixed inset-0 z-40 flex flex-col bg-ink px-5 pt-24 pb-10 text-white md:hidden"
+            className="fixed inset-0 z-40 flex flex-col bg-ink px-5 pt-10 pb-[calc(7rem+env(safe-area-inset-bottom))] text-white md:hidden"
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
             exit={{ clipPath: "inset(0 0 100% 0)" }}

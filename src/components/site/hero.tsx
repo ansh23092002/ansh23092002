@@ -3,27 +3,8 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
-import { EASE } from "./motion";
+import { EASE, Letters } from "./motion";
 import { scrollToId, useLenis } from "./providers";
-
-/** Big display word whose letters rise in one by one. */
-function Letters({ text, delay = 0 }: { text: string; delay?: number }) {
-  return (
-    <span className="inline-flex overflow-hidden" aria-hidden>
-      {text.split("").map((ch, i) => (
-        <motion.span
-          key={i}
-          className="inline-block"
-          initial={{ y: "105%" }}
-          animate={{ y: "0%" }}
-          transition={{ duration: 1, ease: EASE, delay: delay + i * 0.04 }}
-        >
-          {ch === " " ? " " : ch}
-        </motion.span>
-      ))}
-    </span>
-  );
-}
 
 const fade = (delay: number) => ({
   initial: { opacity: 0, y: 14 },
@@ -80,7 +61,7 @@ export function Hero({ photo }: { photo?: string }) {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.4, ease: EASE, delay: 0.4 }}
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 mx-auto h-[80%] w-full max-w-3xl sm:h-[88%]"
+            className="pointer-events-none absolute bottom-0 right-0 z-10 h-[80%] w-full max-w-3xl sm:h-[88%] sm:w-[62%]"
             aria-hidden
           >
             <Image
@@ -89,7 +70,7 @@ export function Hero({ photo }: { photo?: string }) {
               fill
               priority
               sizes="(min-width: 768px) 768px, 100vw"
-              className="object-contain object-bottom grayscale"
+              className="object-contain object-right-bottom [mask-composite:intersect] [mask-image:linear-gradient(to_right,transparent,black_18%,black_82%,transparent),linear-gradient(to_bottom,black_70%,transparent)]"
             />
           </motion.div>
         )}
